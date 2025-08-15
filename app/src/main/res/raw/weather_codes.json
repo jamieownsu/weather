@@ -1,0 +1,305 @@
+{
+  "wmoWeatherCodes": [
+    {
+      "code": [
+        0
+      ],
+      "description": "Clear sky"
+    },
+    {
+      "code": [
+        1,
+        2,
+        3
+      ],
+      "description": "Clouds increasing (from clear to overcast)"
+    },
+    {
+      "code": [
+        4
+      ],
+      "description": "Smoke or haze"
+    },
+    {
+      "code": [
+        5
+      ],
+      "description": "Haze"
+    },
+    {
+      "code": [
+        6
+      ],
+      "description": "Widespread dust in suspension"
+    },
+    {
+      "code": [
+        10
+      ],
+      "description": "Mist"
+    },
+    {
+      "code": [
+        11,
+        12
+      ],
+      "description": "Shallow fog patches"
+    },
+    {
+      "code": [
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      "description": "Precipitation, fog, or thunderstorm in the preceding hour, but not at the time of observation"
+    },
+    {
+      "code": [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+      ],
+      "description": "Duststorm, sandstorm, or blowing snow"
+    },
+    {
+      "code": [
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49
+      ],
+      "description": "Fog or ice fog"
+    },
+    {
+      "code": [
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59
+      ],
+      "description": "Drizzle"
+    },
+    {
+      "code": [
+        51
+      ],
+      "description": "Light drizzle"
+    },
+    {
+      "code": [
+        53
+      ],
+      "description": "Moderate drizzle"
+    },
+    {
+      "code": [
+        55
+      ],
+      "description": "Heavy drizzle"
+    },
+    {
+      "code": [
+        56
+      ],
+      "description": "Light freezing drizzle"
+    },
+    {
+      "code": [
+        57
+      ],
+      "description": "Moderate or heavy freezing drizzle"
+    },
+    {
+      "code": [
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69
+      ],
+      "description": "Rain"
+    },
+    {
+      "code": [
+        61
+      ],
+      "description": "Light rain"
+    },
+    {
+      "code": [
+        63
+      ],
+      "description": "Moderate rain"
+    },
+    {
+      "code": [
+        65
+      ],
+      "description": "Heavy rain"
+    },
+    {
+      "code": [
+        66
+      ],
+      "description": "Light freezing rain"
+    },
+    {
+      "code": [
+        67
+      ],
+      "description": "Moderate or heavy freezing rain"
+    },
+    {
+      "code": [
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79
+      ],
+      "description": "Solid precipitation (snow, snow grains, ice pellets)"
+    },
+    {
+      "code": [
+        71
+      ],
+      "description": "Light snowfall"
+    },
+    {
+      "code": [
+        73
+      ],
+      "description": "Moderate snowfall"
+    },
+    {
+      "code": [
+        75
+      ],
+      "description": "Heavy snowfall"
+    },
+    {
+      "code": [
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89
+      ],
+      "description": "Showers"
+    },
+    {
+      "code": [
+        80
+      ],
+      "description": "Light rain showers"
+    },
+    {
+      "code": [
+        81
+      ],
+      "description": "Moderate or heavy rain showers"
+    },
+    {
+      "code": [
+        82
+      ],
+      "description": "Violent rain showers"
+    },
+    {
+      "code": [
+        83,
+        84
+      ],
+      "description": "Rain and snow mixed showers"
+    },
+    {
+      "code": [
+        85,
+        86
+      ],
+      "description": "Snow showers"
+    },
+    {
+      "code": [
+        87,
+        88,
+        89
+      ],
+      "description": "Shower(s) of snow pellets or small hail"
+    },
+    {
+      "code": [
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99
+      ],
+      "description": "Thunderstorm"
+    },
+    {
+      "code": [
+        95
+      ],
+      "description": "Thunderstorm, slight or moderate, without hail"
+    },
+    {
+      "code": [
+        96
+      ],
+      "description": "Thunderstorm, slight or moderate, with hail"
+    },
+    {
+      "code": [
+        99
+      ],
+      "description": "Thunderstorm, heavy, with hail"
+    }
+  ]
+}

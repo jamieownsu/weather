@@ -1,9 +1,12 @@
 package com.chalupin.practice.data.api.model
 
 import com.google.gson.annotations.SerializedName
-import java.util.Date
 
 data class WeatherModel(
-    @SerializedName("date")
-    val date: Date,
+    @SerializedName("current")
+    val currentModel: CurrentModel,
+    @SerializedName("current_units")
+    val currentUnitsModel: CurrentUnitsModel,
+    @SerializedName("daily")
+    val dailyModel: DailyModel,
 )
