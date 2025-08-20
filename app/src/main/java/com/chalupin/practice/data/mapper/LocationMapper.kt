@@ -1,10 +1,10 @@
 package com.chalupin.practice.data.mapper
 
 import com.chalupin.practice.data.database.entity.LocationEntity
-import com.chalupin.practice.domain.entity.Location
+import com.chalupin.practice.domain.entity.UserLocation
 
-fun LocationEntity.toDomain(): Location {
-    return Location(
+fun LocationEntity.toDomain(): UserLocation {
+    return UserLocation(
         id = this.id,
         locationName = this.locationName,
         latitude = this.latitude,
@@ -12,7 +12,7 @@ fun LocationEntity.toDomain(): Location {
     )
 }
 
-fun Location.toEntity(): LocationEntity {
+fun UserLocation.toEntity(): LocationEntity {
     return LocationEntity(
         id = this.id,
         locationName = this.locationName,

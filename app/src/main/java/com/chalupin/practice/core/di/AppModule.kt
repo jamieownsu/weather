@@ -36,6 +36,12 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun provideContext(@ApplicationContext context: Context): Context {
+        return context
+    }
+
+    @Provides
+    @Singleton
     fun provideWeatherService(@OpenMeteoRetrofit retrofit: Retrofit): WeatherService {
         return retrofit.create(WeatherService::class.java)
     }

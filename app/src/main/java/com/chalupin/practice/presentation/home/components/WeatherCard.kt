@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -26,18 +26,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.chalupin.practice.domain.entity.Weather
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun WeatherCard(
     weather: Weather?,
     isLoading: Boolean,
-    onRemoveClick: () -> Unit,
+    onRefreshClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
             .height(200.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -68,10 +68,10 @@ fun WeatherCard(
                             style = MaterialTheme.typography.titleMedium
                         )
                         Spacer(Modifier.weight(1f))
-                        IconButton(onClick = onRemoveClick) {
+                        IconButton(onClick = onRefreshClick) {
                             Icon(
-                                imageVector = Icons.Outlined.Delete,
-                                contentDescription = "Delete"
+                                imageVector = Icons.Outlined.Refresh,
+                                contentDescription = "Refresh"
                             )
                         }
                     }

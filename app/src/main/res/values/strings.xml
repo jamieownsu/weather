@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">practice</string>
+    <string name="app_name">uWeather</string>
+    <string name="dialog_delete_title">Confirm delete</string>
+    <string name="dialog_delete_body">Are you sure you want to delete this item? This action cannot be undone.</string>
+    <string name="dialog_delete_confirm">Delete</string>
+    <string name="dialog_delete_cancel">Cancel</string>
 </resources>

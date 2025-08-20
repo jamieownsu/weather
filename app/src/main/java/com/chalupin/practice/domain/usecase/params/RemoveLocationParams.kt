@@ -1,5 +1,5 @@
 package com.chalupin.practice.domain.usecase.params
 
-import com.chalupin.practice.domain.entity.Location
+import com.chalupin.practice.domain.entity.UserLocation
 
-data class RemoveLocationParams(val location: Location)
+data class RemoveLocationParams(val userLocation: UserLocation)

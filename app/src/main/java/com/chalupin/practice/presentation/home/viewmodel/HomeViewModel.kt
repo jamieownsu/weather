@@ -2,12 +2,13 @@ package com.chalupin.practice.presentation.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.chalupin.practice.domain.entity.Location
+import com.chalupin.practice.domain.entity.UserLocation
 import com.chalupin.practice.domain.usecase.AddLocationUseCase
 import com.chalupin.practice.domain.usecase.GetLocationsUseCase
 import com.chalupin.practice.domain.usecase.GetWeatherDataUseCase
 import com.chalupin.practice.domain.usecase.RemoveLocationUseCase
 import com.chalupin.practice.domain.usecase.params.AddLocationParams
+import com.chalupin.practice.domain.usecase.params.GetLocationsParams
 import com.chalupin.practice.domain.usecase.params.GetWeatherDataParams
 import com.chalupin.practice.domain.usecase.params.RemoveLocationParams
 import com.chalupin.practice.domain.util.LocationResponse
@@ -32,44 +33,40 @@ class HomeViewModel @Inject constructor(
     private val addLocationUseCase: AddLocationUseCase,
     private val removeLocationUseCase: RemoveLocationUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(HomeState(emptyList()))
+    private val _uiState = MutableStateFlow(HomeState(weatherCardData = emptyList()))
     val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 
-    private val _snackBarChannel = Channel<String>()
+    private val _snackBarChannel = Channel<String>(Channel.BUFFERED)
     val snackBarFlow = _snackBarChannel.receiveAsFlow()
 
-    init {
-        handleEvent(HomeEvent.LoadLocationsEvent)
-    }
+//    private val _snackBarEvent = MutableSharedFlow<String>()
+//    val snackBarEvent = _snackBarEvent.asSharedFlow()
 
     fun handleEvent(event: HomeEvent) {
         when (event) {
-            HomeEvent.LoadLocationsEvent -> loadLocations()
-            is HomeEvent.GetWeatherEvent -> getWeatherData(event.location)
+            is HomeEvent.LoadLocationsEvent -> loadLocations(event.hasLocationPermission)
+            is HomeEvent.GetWeatherEvent -> getWeatherData(event.userLocation)
             is HomeEvent.AddLocationEvent -> addLocation(
-                event.locationName,
-                event.latitude,
-                event.longitude
+                event.locationName, event.latitude, event.longitude
             )
 
             is HomeEvent.RemoveLocationEvent -> removeLocation(event.cardData)
         }
     }
 
-    private fun loadLocations() {
+    private fun loadLocations(hasLocationPermission: Boolean) {
         viewModelScope.launch {
-            when (val result = getLocationsUseCase()) {
+            val params = GetLocationsParams(hasLocationPermission)
+            when (val result = getLocationsUseCase(params)) {
                 is LocationResponse.Success -> {
                     val locations = result.location
                     _uiState.update { currentState ->
                         val items = locations.map { location ->
                             CardData(
-                                location,
-                                null,
-                                isLoading = true
+                                location, null, isLoading = true
                             )
                         }
-                        currentState.copy(weatherData = items)
+                        currentState.copy(weatherCardData = items)
                     }
                     locations.map { location ->
                         handleEvent(HomeEvent.GetWeatherEvent(location))
@@ -83,35 +80,36 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun getWeatherData(location: Location) {
+    private fun getWeatherData(userLocation: UserLocation) {
         viewModelScope.launch {
-            val latitude = location.latitude
-            val longitude = location.longitude
-            val params = GetWeatherDataParams(latitude, longitude)
+            val latitude = userLocation.latitude
+            val longitude = userLocation.longitude
             _uiState.update { currentState ->
-                val items = currentState.weatherData.map { cardData ->
-                    if (cardData.location.id == location.id) {
+                val items = currentState.weatherCardData.map { cardData ->
+                    if (cardData.userLocation.id == userLocation.id) {
                         cardData.copy(isLoading = true)
                     } else {
                         cardData
                     }
                 }
-                currentState.copy(weatherData = items)
+                currentState.copy(weatherCardData = items)
             }
+            val params = GetWeatherDataParams(latitude, longitude)
             val result = getWeatherDataUseCase(params)
             _uiState.update { currentState ->
-                val items = currentState.weatherData.map { cardData ->
-                    if (cardData.location.id == location.id) {
+                val items = currentState.weatherCardData.map { cardData ->
+                    if (cardData.userLocation.id == userLocation.id) {
                         if (result is WeatherResponse.Success) {
                             cardData.copy(
-                                location = location,
+                                userLocation = userLocation,
                                 weather = result.weather,
                                 isLoading = false
                             )
                         } else {
                             val error = result as WeatherResponse.Error
+                            _snackBarChannel.send(result.exception.message.toString())
                             cardData.copy(
-                                location = location,
+                                userLocation = userLocation,
                                 weather = null,
                                 isLoading = false,
                                 error = error.exception.message
@@ -121,7 +119,7 @@ class HomeViewModel @Inject constructor(
                         cardData
                     }
                 }
-                currentState.copy(weatherData = items)
+                currentState.copy(weatherCardData = items)
             }
         }
     }
@@ -131,9 +129,13 @@ class HomeViewModel @Inject constructor(
             val params = AddLocationParams(locationName, latitude, longitude)
             when (val result = addLocationUseCase(params)) {
                 is LocationResponse.Success -> {
-                    val cardData = CardData(result.location, null, isLoading = true)
-                    val updatedList = _uiState.value.weatherData + cardData
-                    _uiState.value = _uiState.value.copy(weatherData = updatedList)
+                    val cardData = CardData(
+                        result.location,
+                        null,
+                        isLoading = true
+                    )
+                    val updatedList = _uiState.value.weatherCardData + cardData
+                    _uiState.value = _uiState.value.copy(weatherCardData = updatedList)
                     handleEvent(HomeEvent.GetWeatherEvent(result.location))
                 }
 
@@ -146,13 +148,13 @@ class HomeViewModel @Inject constructor(
 
     private fun removeLocation(cardData: CardData) {
         viewModelScope.launch {
-            val params = RemoveLocationParams(cardData.location)
+            val params = RemoveLocationParams(cardData.userLocation)
             when (val result = removeLocationUseCase(params)) {
                 is LocationResponse.Success -> {
-                    val updatedList = _uiState.value.weatherData.toMutableList().apply {
+                    val updatedList = _uiState.value.weatherCardData.toMutableList().apply {
                         remove(cardData)
                     }
-                    _uiState.value = _uiState.value.copy(weatherData = updatedList)
+                    _uiState.value = _uiState.value.copy(weatherCardData = updatedList)
                 }
 
                 is LocationResponse.Error -> {

@@ -1,13 +1,11 @@
 package com.chalupin.practice.presentation.home.util
 
-import com.chalupin.practice.domain.entity.Location
+import com.chalupin.practice.domain.entity.UserLocation
 
 sealed class HomeEvent {
+    data class LoadLocationsEvent(val hasLocationPermission: Boolean) : HomeEvent()
 
-
-    data object LoadLocationsEvent : HomeEvent()
-
-    data class GetWeatherEvent(val location: Location) : HomeEvent()
+    data class GetWeatherEvent(val userLocation: UserLocation) : HomeEvent()
 
     data class AddLocationEvent(
         val locationName: String,

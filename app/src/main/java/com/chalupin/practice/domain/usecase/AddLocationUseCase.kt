@@ -1,6 +1,6 @@
 package com.chalupin.practice.domain.usecase
 
-import com.chalupin.practice.domain.entity.Location
+import com.chalupin.practice.domain.entity.UserLocation
 import com.chalupin.practice.domain.repository.LocationRepository
 import com.chalupin.practice.domain.usecase.params.AddLocationParams
 import com.chalupin.practice.domain.util.LocationResponse
@@ -13,8 +13,8 @@ class AddLocationUseCase @Inject constructor(
     private val locationRepository: LocationRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
-    suspend operator fun invoke(params: AddLocationParams): LocationResponse<Location> {
-        val location = Location(
+    suspend operator fun invoke(params: AddLocationParams): LocationResponse<UserLocation> {
+        val userLocation = UserLocation(
             0,
             params.locationName,
             params.latitude,
@@ -22,7 +22,7 @@ class AddLocationUseCase @Inject constructor(
         )
         return withContext(ioDispatcher) {
             try {
-                val location = locationRepository.insertLocation(location)
+                val location = locationRepository.insertLocation(userLocation)
                 LocationResponse.Success(location)
             } catch (e: Exception) {
                 LocationResponse.Error(e)
