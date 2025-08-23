@@ -26,10 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.chalupin.practice.domain.entity.Weather
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
-
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun WeatherCard(
     weather: Weather?,

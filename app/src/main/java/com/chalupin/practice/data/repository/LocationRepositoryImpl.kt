@@ -1,6 +1,5 @@
 package com.chalupin.practice.data.repository
 
-import android.content.Context
 import android.util.Log
 import com.chalupin.practice.data.database.dao.LocationDao
 import com.chalupin.practice.data.mapper.toDomain
@@ -8,23 +7,20 @@ import com.chalupin.practice.data.mapper.toEntity
 import com.chalupin.practice.domain.entity.UserLocation
 import com.chalupin.practice.domain.repository.LocationRepository
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class LocationRepositoryImpl @Inject constructor(
     private val locationDao: LocationDao,
-    private val context: Context,
+    private val fusedLocationClient: FusedLocationProviderClient
 ) : LocationRepository {
 
     override suspend fun getCurrentLocation(): UserLocation {
-        val fusedLocationClient: FusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(context)
         return try {
             val location = fusedLocationClient.lastLocation.await()
             UserLocation(
                 -1,
-                "Your current location",
+                "Local weather",
                 location?.latitude ?: 40.712776,
                 location?.longitude ?: -74.005974,
             )

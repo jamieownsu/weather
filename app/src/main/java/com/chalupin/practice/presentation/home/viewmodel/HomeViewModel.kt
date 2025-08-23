@@ -16,6 +16,7 @@ import com.chalupin.practice.domain.util.WeatherResponse
 import com.chalupin.practice.presentation.home.util.CardData
 import com.chalupin.practice.presentation.home.util.HomeEvent
 import com.chalupin.practice.presentation.home.util.HomeState
+import com.chalupin.practice.presentation.home.util.PermissionChecker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,20 +32,30 @@ class HomeViewModel @Inject constructor(
     private val getWeatherDataUseCase: GetWeatherDataUseCase,
     private val getLocationsUseCase: GetLocationsUseCase,
     private val addLocationUseCase: AddLocationUseCase,
-    private val removeLocationUseCase: RemoveLocationUseCase
+    private val removeLocationUseCase: RemoveLocationUseCase,
+    private val permissionChecker: PermissionChecker,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(HomeState(weatherCardData = emptyList()))
+    private val _uiState = MutableStateFlow(HomeState(weatherCardData = mutableListOf()))
     val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 
     private val _snackBarChannel = Channel<String>(Channel.BUFFERED)
     val snackBarFlow = _snackBarChannel.receiveAsFlow()
 
-//    private val _snackBarEvent = MutableSharedFlow<String>()
-//    val snackBarEvent = _snackBarEvent.asSharedFlow()
+    private val _hasLocationPermission = MutableStateFlow(permissionChecker.hasLocationPermission())
+    val hasLocationPermission: StateFlow<Boolean> = _hasLocationPermission
+
+    init {
+        loadLocations()
+    }
 
     fun handleEvent(event: HomeEvent) {
         when (event) {
-            is HomeEvent.LoadLocationsEvent -> loadLocations(event.hasLocationPermission)
+            HomeEvent.AllowLocationPermissionEvent -> {
+                _hasLocationPermission.value = true
+                handleEvent(HomeEvent.LoadLocationsEvent)
+            }
+
+            HomeEvent.LoadLocationsEvent -> loadLocations()
             is HomeEvent.GetWeatherEvent -> getWeatherData(event.userLocation)
             is HomeEvent.AddLocationEvent -> addLocation(
                 event.locationName, event.latitude, event.longitude
@@ -54,9 +65,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun loadLocations(hasLocationPermission: Boolean) {
+    private fun loadLocations() {
         viewModelScope.launch {
-            val params = GetLocationsParams(hasLocationPermission)
+            val params = GetLocationsParams(permissionChecker.hasLocationPermission())
             when (val result = getLocationsUseCase(params)) {
                 is LocationResponse.Success -> {
                     val locations = result.location

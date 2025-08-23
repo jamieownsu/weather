@@ -1,6 +1,5 @@
 package com.chalupin.practice.presentation.home.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -39,15 +38,8 @@ import com.chalupin.practice.presentation.home.components.WeatherCardHeader
 import com.chalupin.practice.presentation.home.util.HomeEvent
 import com.chalupin.practice.presentation.home.util.ModalState
 import com.chalupin.practice.presentation.home.viewmodel.HomeViewModel
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionStatus
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 
-@OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalPermissionsApi::class
-)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
@@ -56,39 +48,17 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    val locationPermissionState by viewModel.hasLocationPermission.collectAsStateWithLifecycle()
+
+    val snackBarMessageState = viewModel.snackBarFlow.collectAsState(initial = null)
+
     var modalState by remember { mutableStateOf<ModalState>(ModalState.Hidden) }
 
-    val messageState = viewModel.snackBarFlow.collectAsState(initial = null)
-
-    val locationPermissionState = rememberPermissionState(
-        android.Manifest.permission.ACCESS_FINE_LOCATION
-    )
-
-    when (locationPermissionState.status) {
-        is PermissionStatus.Denied -> {}
-        PermissionStatus.Granted -> viewModel.handleEvent(
-            HomeEvent.LoadLocationsEvent(
-                true
-            )
-        )
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.handleEvent(
-            HomeEvent.LoadLocationsEvent(
-                locationPermissionState.status.isGranted
-            )
-        )
-    }
-
-    LaunchedEffect(messageState.value) {
-        val message = messageState.value
+    LaunchedEffect(snackBarMessageState.value) {
+        val message = snackBarMessageState.value
         if (message != null) {
             snackBarHostState.showSnackbar(message)
         }
-//        viewModel.snackBarFlow.collect { message ->
-//            snackBarHostState.showSnackbar(message)
-//        }
     }
 
     Scaffold(
@@ -120,11 +90,19 @@ fun HomeScreen(
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
-            if (!locationPermissionState.status.isGranted) {
-                Box(
+            if (!locationPermissionState) {
+                Column(
                     modifier = Modifier.padding(horizontal = 16.dp)
                 ) {
-                    LocationPermissionCard()
+                    WeatherCardHeader(
+                        "Local weather",
+                        showDelete = false,
+                        onRemoveClick = {})
+                    LocationPermissionCard(onAllowLocationPermission = {
+                        viewModel.handleEvent(
+                            HomeEvent.AllowLocationPermissionEvent
+                        )
+                    })
                 }
             }
             LazyColumn {

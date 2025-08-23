@@ -8,6 +8,9 @@ import com.chalupin.practice.data.repository.LocationRepositoryImpl
 import com.chalupin.practice.data.repository.WeatherRepositoryImpl
 import com.chalupin.practice.domain.repository.LocationRepository
 import com.chalupin.practice.domain.repository.WeatherRepository
+import com.chalupin.practice.presentation.home.util.PermissionChecker
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,8 +39,14 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideContext(@ApplicationContext context: Context): Context {
-        return context
+    fun provideFusedLocationProviderClient(@ApplicationContext context: Context): FusedLocationProviderClient {
+        return LocationServices.getFusedLocationProviderClient(context)
+    }
+
+    @Provides
+    @Singleton
+    fun providePermissionChecker(@ApplicationContext context: Context): PermissionChecker {
+        return PermissionChecker(context)
     }
 
     @Provides
