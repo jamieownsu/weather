@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.chalupin.practice"
+    namespace = "com.chalupin.weather"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.chalupin.practice"
+        applicationId = "com.chalupin.weather"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
