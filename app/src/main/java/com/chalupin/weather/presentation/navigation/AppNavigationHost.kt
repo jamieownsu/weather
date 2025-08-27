@@ -6,7 +6,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.chalupin.weather.core.navigation.NavRoutes
+import com.chalupin.weather.presentation.navigation.NavRoutes
 import com.chalupin.weather.presentation.home.ui.HomeScreen
 import com.chalupin.weather.presentation.search.ui.SearchScreen
 
