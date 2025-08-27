@@ -1,4 +1,4 @@
-package com.chalupin.weather.presentation.navigation
+package com.chalupin.weather.core.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home

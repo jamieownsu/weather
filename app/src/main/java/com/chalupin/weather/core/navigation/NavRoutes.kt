@@ -1,4 +1,4 @@
-package com.chalupin.weather.presentation.navigation
+package com.chalupin.weather.core.navigation
 
 object NavRoutes {
     const val HOME_SCREEN = "HOME_SCREEN"

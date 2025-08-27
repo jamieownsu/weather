@@ -11,7 +11,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.chalupin.weather.presentation.navigation.BottomNavItem
+import com.chalupin.weather.core.navigation.BottomNavItem
 
 @Composable
 fun BottomNavBar(navController: NavHostController) {
