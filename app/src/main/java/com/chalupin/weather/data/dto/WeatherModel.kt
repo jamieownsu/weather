@@ -1,4 +1,4 @@
-package com.chalupin.weather.data.api.model
+package com.chalupin.weather.data.dto
 
 import com.google.gson.annotations.SerializedName
 

@@ -1,9 +1,9 @@
 package com.chalupin.weather.data.mapper
 
-import com.chalupin.weather.data.api.model.CurrentModel
-import com.chalupin.weather.data.api.model.CurrentUnitsModel
-import com.chalupin.weather.data.api.model.DailyModel
-import com.chalupin.weather.data.api.model.WeatherModel
+import com.chalupin.weather.data.dto.CurrentModel
+import com.chalupin.weather.data.dto.CurrentUnitsModel
+import com.chalupin.weather.data.dto.DailyModel
+import com.chalupin.weather.data.dto.WeatherModel
 import com.chalupin.weather.domain.entity.Current
 import com.chalupin.weather.domain.entity.CurrentUnits
 import com.chalupin.weather.domain.entity.Daily

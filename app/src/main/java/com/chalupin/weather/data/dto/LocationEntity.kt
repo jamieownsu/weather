@@ -1,4 +1,4 @@
-package com.chalupin.weather.data.database.entity
+package com.chalupin.weather.data.dto
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

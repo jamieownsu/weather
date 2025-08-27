@@ -10,12 +10,32 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.chalupin.weather.core.theme.PracticeTheme
+import com.chalupin.weather.domain.repository.RemoteConfigRepository
+import com.google.android.libraries.places.api.Places
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var remoteConfigService: RemoteConfigRepository
+
+    private fun initializePlacesSdk() {
+        CoroutineScope(Dispatchers.IO).launch {
+            remoteConfigService.fetchAndActivate()
+            val apiKey = remoteConfigService.getString("places_api_key")
+            runOnUiThread {
+                Places.initializeWithNewPlacesApiEnabled(applicationContext, apiKey)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initializePlacesSdk()
         enableEdgeToEdge()
         setContent {
             PracticeTheme {

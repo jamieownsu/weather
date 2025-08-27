@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.chalupin.weather.data.database.dao.LocationDao
-import com.chalupin.weather.data.database.entity.LocationEntity
+import com.chalupin.weather.data.dao.LocationDao
+import com.chalupin.weather.data.dto.LocationEntity
 
 @Database(
     entities = [LocationEntity::class],

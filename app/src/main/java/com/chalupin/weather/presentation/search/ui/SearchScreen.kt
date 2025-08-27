@@ -1,90 +1,74 @@
 package com.chalupin.weather.presentation.search.ui
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxWidth
+import android.app.Activity
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen() {
-    var searchQuery by rememberSaveable { mutableStateOf("") }
-    var expanded by rememberSaveable { mutableStateOf(false) }
-
-    val allItems = listOf("Apple", "Banana", "Cherry", "Date", "Elderberry", "Fig", "Grape")
-
-    val filteredItems = allItems.filter {
-        it.contains(searchQuery, ignoreCase = true)
-    }
-
-    Scaffold { innerPadding ->
-        SearchBar(
-            inputField = {
-                SearchBarDefaults.InputField(
-                    query = searchQuery,
-                    onQueryChange = { searchQuery = it },
-                    onSearch = { expanded = false },
-                    expanded = expanded,
-                    onExpandedChange = { expanded = it },
-                    placeholder = { Text("Search") },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                    colors = SearchBarDefaults.inputFieldColors()
-                )
-            },
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp),
-            shape = SearchBarDefaults.inputFieldShape,
-            colors = SearchBarDefaults.colors(),
-            tonalElevation = SearchBarDefaults.TonalElevation,
-            shadowElevation = SearchBarDefaults.ShadowElevation,
-            windowInsets = SearchBarDefaults.windowInsets,
-            content = {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    items(filteredItems) { item ->
-                        ListItem(
-                            headlineContent = { Text(item) },
-                            modifier = Modifier.clickable {
-                                searchQuery = item
-                                expanded = false
-                            }
-                        )
-                    }
+    val context = LocalContext.current
+    var placeName by remember { mutableStateOf("No place selected") }
+    val launcher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.let { data ->
+                    val place = Autocomplete.getPlaceFromIntent(data)
+                    placeName = place.name ?: "Unknown Place"
                 }
-            },
-        )
-        //        if (!active) {
-//            LazyColumn(
-//                modifier = Modifier.padding(innerPadding)
-//            ) {
-//                items(allItems) { item ->
-//                    ListItem(
-//                        headlineContent = { Text(item) }
-//                    )
-//                }
-//            }
-//        }
+            } else {
+                placeName = "Cancelled or failed"
+                val status = Autocomplete.getStatusFromIntent(result.data!!)
+                Log.e("PlaceAutocomplete", "Error: ${status.statusMessage}")
+            }
+        }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Button to launch the autocomplete UI
+        Button(onClick = {
+            val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS)
+            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                .build(context)
+            launcher.launch(intent)
+        }) {
+            Text("Find a place")
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // Display the selected place name
+        Text(text = "Selected Place: $placeName", fontSize = 18.sp, textAlign = TextAlign.Center)
     }
 }

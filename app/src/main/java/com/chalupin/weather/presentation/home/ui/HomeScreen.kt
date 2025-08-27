@@ -1,15 +1,12 @@
 package com.chalupin.weather.presentation.home.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -31,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.chalupin.weather.R
+import com.chalupin.weather.presentation.home.components.AddLocationButton
 import com.chalupin.weather.presentation.home.components.LocationPermissionCard
 import com.chalupin.weather.presentation.home.components.OptionsBottomSheet
 import com.chalupin.weather.presentation.home.components.WeatherCard
@@ -72,19 +70,18 @@ fun HomeScreen(
             SnackbarHost(hostState = snackBarHostState)
         },
         floatingActionButton = {
-            FloatingActionButton(
-                modifier = Modifier.padding(16.dp),
-                onClick = {
-//                    navController.navigate(NavRoutes.SEARCH_SCREEN)
+            AddLocationButton(onLocationAdded = { place ->
+                val placeName = place.formattedAddress ?: "Unknown"
+                place.location?.let {
+                    val latitude = it.latitude
+                    val longitude = it.longitude
                     viewModel.handleEvent(
                         HomeEvent.AddLocationEvent(
-                            "Buenos Aires", 34.6037, 58.3821
-
+                            placeName, latitude, longitude
                         )
                     )
-                }) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
-            }
+                }
+            })
         }
     ) { innerPadding ->
         Column(
@@ -92,7 +89,9 @@ fun HomeScreen(
         ) {
             if (!locationPermissionState) {
                 Column(
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+
                 ) {
                     WeatherCardHeader(
                         "Local weather",
@@ -105,7 +104,7 @@ fun HomeScreen(
                     })
                 }
             }
-            LazyColumn {
+            LazyColumn(contentPadding = PaddingValues(bottom = 88.dp)) {
                 items(uiState.weatherCardData) { data ->
                     Column(
                         modifier = Modifier

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<defaultsMap>
+    <entry>
+        <key>places_api_key</key>
+        <value>YOUR_FALLBACK_API_KEY</value>
+    </entry>
+</defaultsMap>

@@ -1,7 +1,7 @@
 package com.chalupin.weather.data.repository
 
 import android.util.Log
-import com.chalupin.weather.data.database.dao.LocationDao
+import com.chalupin.weather.data.dao.LocationDao
 import com.chalupin.weather.data.mapper.toDomain
 import com.chalupin.weather.data.mapper.toEntity
 import com.chalupin.weather.domain.entity.UserLocation

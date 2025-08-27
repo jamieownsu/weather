@@ -1,6 +1,6 @@
 package com.chalupin.weather.data.api
 
-import com.chalupin.weather.data.api.model.WeatherModel
+import com.chalupin.weather.data.dto.WeatherModel
 import retrofit2.http.GET
 import retrofit2.http.Query
 
