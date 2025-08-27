@@ -2,7 +2,7 @@ package com.chalupin.weather.data.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class CurrentModel(
+data class CurrentDto(
     @SerializedName("time")
     val date: String,
     @SerializedName("temperature_2m")

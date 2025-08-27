@@ -1,24 +1,24 @@
 package com.chalupin.weather.data.mapper
 
-import com.chalupin.weather.data.dto.CurrentModel
-import com.chalupin.weather.data.dto.CurrentUnitsModel
-import com.chalupin.weather.data.dto.DailyModel
-import com.chalupin.weather.data.dto.WeatherModel
+import com.chalupin.weather.data.dto.CurrentDto
+import com.chalupin.weather.data.dto.CurrentUnitsDto
+import com.chalupin.weather.data.dto.DailyDto
+import com.chalupin.weather.data.dto.WeatherDto
 import com.chalupin.weather.domain.entity.Current
 import com.chalupin.weather.domain.entity.CurrentUnits
 import com.chalupin.weather.domain.entity.Daily
 import com.chalupin.weather.domain.entity.Weather
 
 
-fun WeatherModel.toDomain(): Weather {
+fun WeatherDto.toDomain(): Weather {
     return Weather(
-        current = this.currentModel.toDomain(),
-        currentUnits = this.currentUnitsModel.toDomain(),
-        daily = this.dailyModel.toDomain()
+        current = this.currentDto.toDomain(),
+        currentUnits = this.currentUnitsDto.toDomain(),
+        daily = this.dailyDto.toDomain()
     )
 }
 
-fun CurrentModel.toDomain(): Current {
+fun CurrentDto.toDomain(): Current {
     return Current(
         date = this.date,
         temperature = this.temperature,
@@ -26,13 +26,13 @@ fun CurrentModel.toDomain(): Current {
     )
 }
 
-fun CurrentUnitsModel.toDomain(): CurrentUnits {
+fun CurrentUnitsDto.toDomain(): CurrentUnits {
     return CurrentUnits(
         temperatureUnit = this.temperatureUnit,
     )
 }
 
-fun DailyModel.toDomain(): Daily {
+fun DailyDto.toDomain(): Daily {
     return Daily(
         date = this.date,
         temperatureMin = this.temperatureMin,

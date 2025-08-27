@@ -5,10 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.chalupin.weather.data.dao.LocationDao
-import com.chalupin.weather.data.dto.LocationEntity
+import com.chalupin.weather.data.dto.LocationDto
 
 @Database(
-    entities = [LocationEntity::class],
+    entities = [LocationDto::class],
     version = 1,
     exportSchema = false
 )

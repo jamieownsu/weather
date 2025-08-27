@@ -2,11 +2,11 @@ package com.chalupin.weather.data.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class WeatherModel(
+data class WeatherDto(
     @SerializedName("current")
-    val currentModel: CurrentModel,
+    val currentDto: CurrentDto,
     @SerializedName("current_units")
-    val currentUnitsModel: CurrentUnitsModel,
+    val currentUnitsDto: CurrentUnitsDto,
     @SerializedName("daily")
-    val dailyModel: DailyModel,
+    val dailyDto: DailyDto,
 )

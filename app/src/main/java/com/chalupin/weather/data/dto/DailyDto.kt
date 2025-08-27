@@ -2,7 +2,7 @@ package com.chalupin.weather.data.dto
 
 import com.google.gson.annotations.SerializedName
 
-class DailyModel {
+class DailyDto {
     @SerializedName("time")
     val date: List<String> = emptyList()
 
