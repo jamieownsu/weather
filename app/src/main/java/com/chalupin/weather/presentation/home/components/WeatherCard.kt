@@ -1,5 +1,6 @@
 package com.chalupin.weather.presentation.home.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -24,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.chalupin.weather.domain.entity.Weather
 
@@ -59,10 +62,14 @@ fun WeatherCard(
                             text = it.getTemperature(),
                             style = MaterialTheme.typography.titleLarge
                         )
-                        Spacer(Modifier.width(16.dp))
+                        Spacer(Modifier.width(8.dp))
+                        WeatherTypeIcon(
+                            it.getCurrentWeatherTypeIcon(),
+                        )
+                        Spacer(Modifier.width(8.dp))
                         Text(
                             text = it.getCurrentWeatherType(),
-                            style = MaterialTheme.typography.titleMedium
+                            style = MaterialTheme.typography.titleSmall
                         )
                         Spacer(Modifier.weight(1f))
                         IconButton(onClick = onRefreshClick) {
@@ -72,42 +79,32 @@ fun WeatherCard(
                             )
                         }
                     }
-                    Text(
-                        text = it.getDate(),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
                     Spacer(Modifier.weight(1f))
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        items(it.getDailyDates()) { item ->
-                            Text(
-                                text = item,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
-                    LazyRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        items(it.getDailyMaxTemps()) { item ->
-                            Text(
-                                text = item,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
-                    LazyRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        items(it.getDailyMinTemps()) { item ->
-                            Text(
-                                text = item,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
+                        items(it.getDailyData()) { item ->
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = item.date,
+                                    style = MaterialTheme.typography.titleSmall
+                                )
+                                Spacer(Modifier.height(4.dp))
+                                Text(
+                                    text = item.maxTemp,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Image(
+                                    painter = painterResource(id = item.icon),
+                                    contentDescription = "A weather icon",
+                                    modifier = Modifier.size(28.dp)
+                                )
+                                Text(
+                                    text = item.minTemp,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
                         }
                     }
                 }

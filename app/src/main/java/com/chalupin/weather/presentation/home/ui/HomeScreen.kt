@@ -33,8 +33,8 @@ import com.chalupin.weather.presentation.home.components.LocationPermissionCard
 import com.chalupin.weather.presentation.home.components.OptionsBottomSheet
 import com.chalupin.weather.presentation.home.components.WeatherCard
 import com.chalupin.weather.presentation.home.components.WeatherCardHeader
-import com.chalupin.weather.presentation.home.util.HomeEvent
-import com.chalupin.weather.presentation.home.util.ModalState
+import com.chalupin.weather.presentation.home.state.HomeEvent
+import com.chalupin.weather.presentation.home.state.ModalState
 import com.chalupin.weather.presentation.home.viewmodel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,7 +91,6 @@ fun HomeScreen(
                 Column(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-
                 ) {
                     WeatherCardHeader(
                         "Local weather",
@@ -104,8 +103,8 @@ fun HomeScreen(
                     })
                 }
             }
-            LazyColumn(contentPadding = PaddingValues(bottom = 88.dp)) {
-                items(uiState.weatherCardData) { data ->
+            LazyColumn(contentPadding = PaddingValues(bottom = 72.dp)) {
+                items(uiState.weatherCards) { data ->
                     Column(
                         modifier = Modifier
                             .padding(horizontal = 16.dp)
@@ -142,7 +141,7 @@ fun HomeScreen(
                 OptionsBottomSheet(
                     onDeleteClicked = {
                         viewModel.handleEvent(
-                            HomeEvent.RemoveLocationEvent(state.cardData)
+                            HomeEvent.RemoveLocationEvent(state.cardDataState)
                         )
                         modalState = ModalState.Hidden
                     }

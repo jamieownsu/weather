@@ -7,6 +7,8 @@ import com.chalupin.weather.data.mapper.toEntity
 import com.chalupin.weather.domain.entity.UserLocation
 import com.chalupin.weather.domain.repository.LocationRepository
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -18,6 +20,11 @@ class LocationRepositoryImpl @Inject constructor(
     override suspend fun getCurrentLocation(): UserLocation {
         return try {
             val location = fusedLocationClient.lastLocation.await()
+//            val cancellationTokenSource = CancellationTokenSource()
+//            val location = fusedLocationClient.getCurrentLocation(
+//                Priority.PRIORITY_HIGH_ACCURACY,
+//                cancellationTokenSource.token
+//            ).await()
             UserLocation(
                 -1,
                 "Local weather",

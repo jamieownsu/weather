@@ -9,6 +9,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.chalupin.weather.core.constant.PLACES_API_KEY_KEY
 import com.chalupin.weather.core.theme.PracticeTheme
 import com.chalupin.weather.domain.repository.RemoteConfigRepository
 import com.google.android.libraries.places.api.Places
@@ -26,7 +27,7 @@ class MainActivity : ComponentActivity() {
     private fun initializePlacesSdk() {
         CoroutineScope(Dispatchers.IO).launch {
             remoteConfigService.fetchAndActivate()
-            val apiKey = remoteConfigService.getString("places_api_key")
+            val apiKey = remoteConfigService.getString(PLACES_API_KEY_KEY)
             runOnUiThread {
                 Places.initializeWithNewPlacesApiEnabled(applicationContext, apiKey)
             }

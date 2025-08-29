@@ -1,4 +1,4 @@
-package com.chalupin.weather.presentation.home.util
+package com.chalupin.weather.presentation.home.state
 
 import com.chalupin.weather.domain.entity.UserLocation
 
@@ -15,5 +15,5 @@ sealed class HomeEvent {
         val longitude: Double
     ) : HomeEvent()
 
-    data class RemoveLocationEvent(val cardData: CardData) : HomeEvent()
+    data class RemoveLocationEvent(val cardDataState: CardDataState) : HomeEvent()
 }

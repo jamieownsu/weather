@@ -1,44 +1,49 @@
 package com.chalupin.weather.domain.entity
 
+import androidx.annotation.RawRes
 import com.chalupin.weather.domain.enum.WeatherCodes
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.util.Locale
 import kotlin.math.roundToInt
 
 data class Weather(val current: Current, val currentUnits: CurrentUnits, val daily: Daily) {
     fun getTemperature(): String {
-        return "${current.temperature} ${currentUnits.temperatureUnit}"
+        return "${current.temperature.roundToInt()}${currentUnits.temperatureUnit}"
     }
 
-    fun getDate(): String {
-        val date = LocalDateTime.parse(current.date)
-        val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
-            .withLocale(Locale.getDefault())
-        val formattedDate: String = date.format(formatter)
-        return formattedDate
-    }
+//    fun getDate(): String {
+//        val date = LocalDateTime.parse(current.date)
+//        val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
+//            .withLocale(Locale.getDefault())
+//        val formattedDate: String = date.format(formatter)
+//        return formattedDate
+//    }
 
     fun getCurrentWeatherType(): String {
         return WeatherCodes.getDescriptionForCode(current.weatherCode)
     }
 
-    fun getDailyDates(): List<String> {
+    @RawRes
+    fun getCurrentWeatherTypeIcon(): Int {
+        return WeatherCodes.getLottieIconFile(current.weatherCode)
+    }
+
+    fun getDailyData(): List<DailyColumn> {
         val dayOfWeekFormat = DateTimeFormatter.ofPattern("EEE")
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        return daily.date.map {
-            val date = LocalDate.parse(it, formatter)
-            date.format(dayOfWeekFormat)
+        val retList = mutableListOf<DailyColumn>()
+        for ((i, item) in daily.date.withIndex()) {
+            val date = LocalDate.parse(item, formatter)
+            retList.add(
+                DailyColumn(
+                    date.format(dayOfWeekFormat),
+                    "${daily.temperatureMin[i].roundToInt()}${currentUnits.temperatureUnit}",
+                    "${daily.temperatureMin[i].roundToInt()}${currentUnits.temperatureUnit}",
+                    WeatherCodes.getLottieIconFile(daily.weatherCode[i]),
+                    WeatherCodes.getSvgFile(daily.weatherCode[i])
+                )
+            )
         }
-    }
-
-    fun getDailyMinTemps(): List<String> {
-        return daily.temperatureMin.map { "${it.roundToInt()}${currentUnits.temperatureUnit}" }
-    }
-
-    fun getDailyMaxTemps(): List<String> {
-        return daily.temperatureMax.map { "${it.roundToInt()}${currentUnits.temperatureUnit}" }
+        return retList
     }
 }

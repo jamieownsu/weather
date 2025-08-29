@@ -1,57 +1,202 @@
 package com.chalupin.weather.domain.enum
 
-enum class WeatherCodes(val codes: List<Int>, val description: String) {
-    CLEAR_SKY(listOf(0), "Clear sky"),
-    CLOUDS_INCREASING(listOf(1, 2, 3), "Clouds increasing (from clear to overcast)"),
-    SMOKE_OR_HAZE(listOf(4), "Smoke or haze"),
-    HAZE(listOf(5), "Haze"),
-    WIDESPREAD_DUST(listOf(6), "Widespread dust in suspension"),
-    MIST(listOf(10), "Mist"),
-    SHALLOW_FOG_PATCHES(listOf(11, 12), "Shallow fog patches"),
-    PRECIPITATION_FOG_OR_THUNDERSTORM(
-        listOf(20, 21, 22, 23, 24, 25, 26, 27, 28, 29),
-        "Precipitation, fog, or thunderstorm in the preceding hour, but not at the time of observation"
+import androidx.annotation.RawRes
+import com.chalupin.weather.R
+
+enum class WeatherCodes(
+    val codes: List<Int>,
+    val description: String,
+    val animatedIcon: Int,
+    val icon: Int
+) {
+    CLEAR_OR_NO_PRECIPITATION(
+        listOf(0, 1, 2),
+        "Clear",
+        R.raw.clear_day, R.drawable.clear_day
     ),
-    DUSTSTORM_SANDSTORM_OR_BLOWING_SNOW(
-        listOf(30, 31, 32, 33, 34, 35, 36, 37, 38, 39),
-        "Duststorm, sandstorm, or blowing snow"
+    CLOUDS_FORMING(
+        listOf(3),
+        "Clouds forming",
+        R.raw.cloudy, R.drawable.cloudy
     ),
-    FOG_OR_ICE_FOG(listOf(40, 41, 42, 43, 44, 45, 46, 47, 48, 49), "Fog or ice fog"),
-    DRIZZLE(listOf(50, 51, 52, 53, 54, 55, 56, 57, 58, 59), "Drizzle"),
-    LIGHT_DRIZZLE(listOf(51), "Light drizzle"),
-    MODERATE_DRIZZLE(listOf(53), "Moderate drizzle"),
-    HEAVY_DRIZZLE(listOf(55), "Heavy drizzle"),
-    LIGHT_FREEZING_DRIZZLE(listOf(56), "Light freezing drizzle"),
-    MODERATE_HEAVY_FREEZING_DRIZZLE(listOf(57), "Moderate or heavy freezing drizzle"),
-    RAIN(listOf(60, 61, 62, 63, 64, 65, 66, 67, 68, 69), "Rain"),
-    LIGHT_RAIN(listOf(61), "Light rain"),
-    MODERATE_RAIN(listOf(63), "Moderate rain"),
-    HEAVY_RAIN(listOf(65), "Heavy rain"),
-    LIGHT_FREEZING_RAIN(listOf(66), "Light freezing rain"),
-    MODERATE_HEAVY_FREEZING_RAIN(listOf(67), "Moderate or heavy freezing rain"),
-    SOLID_PRECIPITATION(
-        listOf(70, 71, 72, 73, 74, 75, 76, 77, 78, 79),
-        "Solid precipitation (snow, snow grains, ice pellets)"
+    SMOKE(
+        listOf(4),
+        "Smoke",
+        R.raw.smoke, R.drawable.smoke
     ),
-    LIGHT_SNOWFALL(listOf(71), "Light snowfall"),
-    MODERATE_SNOWFALL(listOf(73), "Moderate snowfall"),
-    HEAVY_SNOWFALL(listOf(75), "Heavy snowfall"),
-    SHOWERS(listOf(80, 81, 82, 83, 84, 85, 86, 87, 88, 89), "Showers"),
-    LIGHT_RAIN_SHOWERS(listOf(80), "Light rain showers"),
-    MODERATE_HEAVY_RAIN_SHOWERS(listOf(81), "Moderate or heavy rain showers"),
-    VIOLENT_RAIN_SHOWERS(listOf(82), "Violent rain showers"),
-    RAIN_AND_SNOW_MIXED_SHOWERS(listOf(83, 84), "Rain and snow mixed showers"),
-    SNOW_SHOWERS(listOf(85, 86), "Snow showers"),
-    SHOWER_OF_SNOW_PELLETS_OR_HAIL(listOf(87, 88, 89), "Shower(s) of snow pellets or small hail"),
-    THUNDERSTORM(listOf(90, 91, 92, 93, 94, 95, 96, 97, 98, 99), "Thunderstorm"),
-    THUNDERSTORM_WITHOUT_HAIL(listOf(95), "Thunderstorm, slight or moderate, without hail"),
-    THUNDERSTORM_WITH_HAIL(listOf(96), "Thunderstorm, slight or moderate, with hail"),
-    THUNDERSTORM_HEAVY_WITH_HAIL(listOf(99), "Thunderstorm, heavy, with hail");
+    HAZE(
+        listOf(5),
+        "Haze",
+        R.raw.haze, R.drawable.haze
+    ),
+    DUST_OR_SAND(
+        listOf(6, 7, 8),
+        "Dust or sand",
+        R.raw.dust_wind, R.drawable.dust_wind
+    ),
+    DUSTSTORM_OR_SANDSTORM(
+        listOf(9),
+        "Duststorm or sandstorm",
+        R.raw.duststorm, R.drawable.duststorm
+    ),
+    MIST(
+        listOf(10),
+        "Mist",
+        R.raw.mist, R.drawable.mist
+    ),
+    FOG_PATCHES(
+        listOf(11, 12, 41),
+        "Fog patches",
+        R.raw.fog, R.drawable.fog
+    ),
+    LIGHTNING(
+        listOf(13),
+        "Lightning visible, no thunder",
+        R.raw.thunderstorms, R.drawable.thunderstorms
+    ),
+    PRECIPITATION_NEARBY(
+        listOf(14, 15, 16),
+        "Precipitation nearby",
+        R.raw.rain, R.drawable.rain
+    ),
+    THUNDERSTORM(
+        listOf(17, 29, 91, 92, 93, 94, 95, 96, 97, 98, 99),
+        "Thunderstorm",
+        R.raw.thunderstorms, R.drawable.thunderstorms
+    ),
+    SQUALLS(
+        listOf(18),
+        "Squalls",
+        R.raw.wind, R.drawable.wind
+    ),
+    FUNNEL_CLOUD(
+        listOf(19),
+        "Funnel cloud",
+        R.raw.tornado, R.drawable.tornado
+    ),
+    DRIZZLE_RECENT(
+        listOf(20),
+        "Recent drizzle",
+        R.raw.drizzle, R.drawable.drizzle
+    ),
+    RAIN_RECENT(
+        listOf(21),
+        "Recent rain",
+        R.raw.rain, R.drawable.rain
+    ),
+    SNOW_RECENT(
+        listOf(22),
+        "Recent snow",
+        R.raw.snow, R.drawable.snow
+    ),
+    RAIN_AND_SNOW_RECENT(
+        listOf(23),
+        "Recent rain and snow",
+        R.raw.sleet, R.drawable.sleet
+    ),
+    FREEZING_RAIN_RECENT(
+        listOf(24),
+        "Recent freezing drizzle or rain",
+        R.raw.hail, R.drawable.hail
+    ),
+    RAIN_SHOWERS_RECENT(
+        listOf(25),
+        "Recent rain showers",
+        R.raw.rain, R.drawable.rain
+    ),
+    SNOW_SHOWERS_RECENT(
+        listOf(26),
+        "Recent snow or rain/snow showers",
+        R.raw.snow, R.drawable.snow
+    ),
+    HAIL_SHOWERS_RECENT(
+        listOf(27),
+        "Recent hail showers",
+        R.raw.hail, R.drawable.hail
+    ),
+    FOG_RECENT(
+        listOf(28),
+        "Recent fog or ice fog",
+        R.raw.fog, R.drawable.fog
+    ),
+    DUSTSTORM(
+        listOf(30, 31, 32, 33, 34, 35),
+        "Duststorm or sandstorm",
+        R.raw.duststorm, R.drawable.duststorm
+    ),
+    BLOWING_SNOW(
+        listOf(36, 37, 38, 39),
+        "Blowing snow",
+        R.raw.snow, R.drawable.snow
+    ),
+    FOG(
+        listOf(40, 42, 43, 44, 45, 46, 47, 48, 49),
+        "Fog",
+        R.raw.fog, R.drawable.fog
+    ),
+    DRIZZLE(
+        listOf(50, 51, 52, 53, 54, 55, 56, 57, 58, 59),
+        "Drizzle",
+        R.raw.drizzle, R.drawable.drizzle
+    ),
+    RAIN(
+        listOf(60, 61, 62, 63, 64, 65, 66, 67, 68, 69),
+        "Rain",
+        R.raw.rain, R.drawable.rain
+    ),
+    SNOW(
+        listOf(70, 71, 72, 73, 74, 75, 76, 77, 78),
+        "Snow",
+        R.raw.snow, R.drawable.snow
+    ),
+    ICE_PELLETS(
+        listOf(79),
+        "Ice pellets",
+        R.raw.sleet, R.drawable.sleet
+    ),
+    RAIN_SHOWERS(
+        listOf(80, 81, 82),
+        "Rain showers",
+        R.raw.rain, R.drawable.rain
+    ),
+    RAIN_AND_SNOW_SHOWERS(
+        listOf(83, 84),
+        "Rain and snow showers",
+        R.raw.sleet, R.drawable.sleet
+    ),
+    SNOW_SHOWERS(
+        listOf(85, 86),
+        "Snow showers",
+        R.raw.snow, R.drawable.snow
+    ),
+    HAIL_SHOWERS(
+        listOf(87, 88, 89, 90),
+        "Hail showers",
+        R.raw.hail, R.drawable.hail
+    ),
+    UNKNOWN(
+        listOf(),
+        "",
+        R.raw.clear_day,
+        R.drawable.clear_day
+    );
 
     companion object {
         fun getDescriptionForCode(code: Int): String {
             return entries.firstOrNull { it.codes.contains(code) }?.description
                 ?: "Unknown"
+        }
+
+        @RawRes
+        fun getSvgFile(code: Int): Int {
+            return entries.firstOrNull { it.codes.contains(code) }?.icon
+                ?: R.drawable.clear_day
+        }
+
+        @RawRes
+        fun getLottieIconFile(code: Int): Int {
+            return entries.firstOrNull { it.codes.contains(code) }?.animatedIcon
+                ?: R.raw.clear_day
         }
     }
 }

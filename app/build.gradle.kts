@@ -5,6 +5,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -57,8 +58,11 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.firebase.config)
     implementation(libs.places)
+
+    implementation(libs.lottie.compose)
 
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
