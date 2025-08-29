@@ -25,7 +25,6 @@ fun AppNavigationHost(
         ) {
             HomeScreen(
                 viewModel = hiltViewModel(),
-                navController,
                 snackBarHostState,
             )
         }

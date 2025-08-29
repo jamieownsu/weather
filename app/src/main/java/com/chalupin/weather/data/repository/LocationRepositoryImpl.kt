@@ -8,7 +8,7 @@ import com.chalupin.weather.domain.entity.UserLocation
 import com.chalupin.weather.domain.repository.LocationRepository
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Priority
-import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.gms.tasks.CancellationToken
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -17,13 +17,12 @@ class LocationRepositoryImpl @Inject constructor(
     private val fusedLocationClient: FusedLocationProviderClient
 ) : LocationRepository {
 
-    override suspend fun getCurrentLocation(): UserLocation {
+    override suspend fun getCurrentLocation(cancellationToken: CancellationToken): UserLocation {
         return try {
 //            val location = fusedLocationClient.lastLocation.await()
-            val cancellationTokenSource = CancellationTokenSource()
             val location = fusedLocationClient.getCurrentLocation(
                 Priority.PRIORITY_HIGH_ACCURACY,
-                cancellationTokenSource.token
+                cancellationToken
             ).await()
             UserLocation(
                 -1,

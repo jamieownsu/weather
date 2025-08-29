@@ -9,14 +9,16 @@ import com.chalupin.weather.domain.usecase.GetUserLocationUseCase
 import com.chalupin.weather.domain.usecase.GetWeatherDataUseCase
 import com.chalupin.weather.domain.usecase.RemoveLocationUseCase
 import com.chalupin.weather.domain.usecase.params.AddLocationParams
+import com.chalupin.weather.domain.usecase.params.GetUserLocationParams
 import com.chalupin.weather.domain.usecase.params.GetWeatherDataParams
 import com.chalupin.weather.domain.usecase.params.RemoveLocationParams
 import com.chalupin.weather.domain.util.LocationResponse
 import com.chalupin.weather.domain.util.WeatherResponse
-import com.chalupin.weather.presentation.home.util.WeatherCardData
 import com.chalupin.weather.presentation.home.state.HomeEvent
 import com.chalupin.weather.presentation.home.state.HomeState
 import com.chalupin.weather.presentation.home.util.PermissionChecker
+import com.chalupin.weather.presentation.home.util.WeatherCardData
+import com.google.android.gms.tasks.CancellationTokenSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,37 +69,49 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private var cancellationTokenSource: CancellationTokenSource? = null
+
+    fun cancelLocationRequest() {
+        cancellationTokenSource?.cancel()
+        cancellationTokenSource = null
+    }
     private fun loadUserLocation() {
         viewModelScope.launch {
-            val localWeather = UserLocation.createLocalWeatherLocation()
-            val cardDataState = WeatherCardData(
-                localWeather, null, isLoading = true
-            )
-            val updatedList = listOf(cardDataState) + _uiState.value.weatherCards
-            _uiState.value = _uiState.value.copy(weatherCards = updatedList)
-            when (val result = getUserLocationUseCase()) {
-                is LocationResponse.Success -> {
-                    val location = result.location
-                    _uiState.update { currentState ->
-                        val items = currentState.weatherCards.map { cardData ->
-                            if (cardData.userLocation.id == location.id) {
-                                cardData.copy(
-                                    userLocation = location,
-                                    weather = null,
-                                    isLoading = true
-                                )
-                            } else {
-                                cardData
+            try {
+                val localWeather = UserLocation.createLocalWeatherLocation()
+                val cardDataState = WeatherCardData(
+                    localWeather, null, isLoading = true
+                )
+                val updatedList = listOf(cardDataState) + _uiState.value.weatherCards
+                _uiState.value = _uiState.value.copy(weatherCards = updatedList)
+                cancellationTokenSource = CancellationTokenSource()
+                val params = GetUserLocationParams(cancellationTokenSource!!.token)
+                when (val result = getUserLocationUseCase(params)) {
+                    is LocationResponse.Success -> {
+                        val location = result.location
+                        _uiState.update { currentState ->
+                            val items = currentState.weatherCards.map { cardData ->
+                                if (cardData.userLocation.id == location.id) {
+                                    cardData.copy(
+                                        userLocation = location,
+                                        weather = null,
+                                        isLoading = true
+                                    )
+                                } else {
+                                    cardData
+                                }
                             }
+                            currentState.copy(weatherCards = items)
                         }
-                        currentState.copy(weatherCards = items)
+                        handleEvent(HomeEvent.GetWeatherEvent(location))
                     }
-                    handleEvent(HomeEvent.GetWeatherEvent(location))
-                }
 
-                is LocationResponse.Error -> {
-                    _snackBarChannel.send(result.exception.message.toString())
+                    is LocationResponse.Error -> {
+                        _snackBarChannel.send(result.exception.message.toString())
+                    }
                 }
+            } finally {
+                cancellationTokenSource = null
             }
         }
     }
