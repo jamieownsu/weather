@@ -1,5 +1,5 @@
 [versions]
-agp = "8.12.1"
+agp = "8.12.2"
 converterGson = "3.0.0"
 firebaseBom = "34.1.0"
 hiltCompiler = "2.57.1"

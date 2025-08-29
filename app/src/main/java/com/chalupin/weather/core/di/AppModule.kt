@@ -2,18 +2,15 @@ package com.chalupin.weather.core.di
 
 import android.content.Context
 import com.chalupin.weather.data.api.WeatherService
-import com.chalupin.weather.data.database.LocationDatabase
 import com.chalupin.weather.data.dao.LocationDao
+import com.chalupin.weather.data.database.LocationDatabase
 import com.chalupin.weather.data.repository.LocationRepositoryImpl
-import com.chalupin.weather.data.repository.RemoteConfigRepositoryImpl
 import com.chalupin.weather.data.repository.WeatherRepositoryImpl
 import com.chalupin.weather.domain.repository.LocationRepository
-import com.chalupin.weather.domain.repository.RemoteConfigRepository
 import com.chalupin.weather.domain.repository.WeatherRepository
 import com.chalupin.weather.presentation.home.util.PermissionChecker
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

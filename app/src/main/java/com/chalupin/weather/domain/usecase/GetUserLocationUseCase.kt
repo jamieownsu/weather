@@ -8,15 +8,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class GetLocationsUseCase @Inject constructor(
+class GetUserLocationUseCase @Inject constructor(
     private val locationRepository: LocationRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
-    suspend operator fun invoke(): LocationResponse<List<UserLocation>> {
+    suspend operator fun invoke(): LocationResponse<UserLocation> {
         return withContext(ioDispatcher) {
             try {
-                val locations = locationRepository.getLocations()
-                LocationResponse.Success(locations)
+                val userLocation = locationRepository.getCurrentLocation()
+                LocationResponse.Success(userLocation)
             } catch (e: Exception) {
                 LocationResponse.Error(e)
             }

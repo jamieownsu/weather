@@ -1,7 +1,7 @@
 package com.chalupin.weather.domain.entity
 
-import androidx.annotation.RawRes
 import com.chalupin.weather.domain.enum.WeatherCodes
+import com.chalupin.weather.presentation.home.util.WeatherIconType
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
@@ -11,21 +11,12 @@ data class Weather(val current: Current, val currentUnits: CurrentUnits, val dai
         return "${current.temperature.roundToInt()}${currentUnits.temperatureUnit}"
     }
 
-//    fun getDate(): String {
-//        val date = LocalDateTime.parse(current.date)
-//        val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
-//            .withLocale(Locale.getDefault())
-//        val formattedDate: String = date.format(formatter)
-//        return formattedDate
-//    }
-
     fun getCurrentWeatherType(): String {
         return WeatherCodes.getDescriptionForCode(current.weatherCode)
     }
 
-    @RawRes
-    fun getCurrentWeatherTypeIcon(): Int {
-        return WeatherCodes.getLottieIconFile(current.weatherCode)
+    fun getCurrentWeatherTypeIcon(): WeatherIconType {
+        return WeatherIconType.WeatherIconAnimated(WeatherCodes.getLottieIconFile(current.weatherCode))
     }
 
     fun getDailyData(): List<DailyColumn> {
@@ -37,10 +28,9 @@ data class Weather(val current: Current, val currentUnits: CurrentUnits, val dai
             retList.add(
                 DailyColumn(
                     date.format(dayOfWeekFormat),
+                    "${daily.temperatureMax[i].roundToInt()}${currentUnits.temperatureUnit}",
                     "${daily.temperatureMin[i].roundToInt()}${currentUnits.temperatureUnit}",
-                    "${daily.temperatureMin[i].roundToInt()}${currentUnits.temperatureUnit}",
-                    WeatherCodes.getLottieIconFile(daily.weatherCode[i]),
-                    WeatherCodes.getSvgFile(daily.weatherCode[i])
+                    WeatherIconType.WeatherIconStatic(WeatherCodes.getSvgFile(daily.weatherCode[i]))
                 )
             )
         }

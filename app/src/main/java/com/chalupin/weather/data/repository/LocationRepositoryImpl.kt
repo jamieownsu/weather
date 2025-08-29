@@ -19,12 +19,12 @@ class LocationRepositoryImpl @Inject constructor(
 
     override suspend fun getCurrentLocation(): UserLocation {
         return try {
-            val location = fusedLocationClient.lastLocation.await()
-//            val cancellationTokenSource = CancellationTokenSource()
-//            val location = fusedLocationClient.getCurrentLocation(
-//                Priority.PRIORITY_HIGH_ACCURACY,
-//                cancellationTokenSource.token
-//            ).await()
+//            val location = fusedLocationClient.lastLocation.await()
+            val cancellationTokenSource = CancellationTokenSource()
+            val location = fusedLocationClient.getCurrentLocation(
+                Priority.PRIORITY_HIGH_ACCURACY,
+                cancellationTokenSource.token
+            ).await()
             UserLocation(
                 -1,
                 "Local weather",

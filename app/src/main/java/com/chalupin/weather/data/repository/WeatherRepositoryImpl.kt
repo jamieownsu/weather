@@ -22,7 +22,6 @@ class WeatherRepositoryImpl @Inject constructor(
                 daily = "temperature_2m_min,temperature_2m_max,weather_code",
                 timezone = "America/New_York"
             )
-            Log.d("RESP", response.toDomain().toString())
             return response.toDomain()
         } catch (e: Exception) {
             Log.e("getWeatherData", e.message.toString())

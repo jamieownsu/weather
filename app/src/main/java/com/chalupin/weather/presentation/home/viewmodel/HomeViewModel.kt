@@ -5,15 +5,15 @@ import androidx.lifecycle.viewModelScope
 import com.chalupin.weather.domain.entity.UserLocation
 import com.chalupin.weather.domain.usecase.AddLocationUseCase
 import com.chalupin.weather.domain.usecase.GetLocationsUseCase
+import com.chalupin.weather.domain.usecase.GetUserLocationUseCase
 import com.chalupin.weather.domain.usecase.GetWeatherDataUseCase
 import com.chalupin.weather.domain.usecase.RemoveLocationUseCase
 import com.chalupin.weather.domain.usecase.params.AddLocationParams
-import com.chalupin.weather.domain.usecase.params.GetLocationsParams
 import com.chalupin.weather.domain.usecase.params.GetWeatherDataParams
 import com.chalupin.weather.domain.usecase.params.RemoveLocationParams
 import com.chalupin.weather.domain.util.LocationResponse
 import com.chalupin.weather.domain.util.WeatherResponse
-import com.chalupin.weather.presentation.home.state.CardDataState
+import com.chalupin.weather.presentation.home.util.WeatherCardData
 import com.chalupin.weather.presentation.home.state.HomeEvent
 import com.chalupin.weather.presentation.home.state.HomeState
 import com.chalupin.weather.presentation.home.util.PermissionChecker
@@ -30,10 +30,11 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getWeatherDataUseCase: GetWeatherDataUseCase,
+    private val getUserLocationUseCase: GetUserLocationUseCase,
     private val getLocationsUseCase: GetLocationsUseCase,
     private val addLocationUseCase: AddLocationUseCase,
     private val removeLocationUseCase: RemoveLocationUseCase,
-    private val permissionChecker: PermissionChecker,
+    permissionChecker: PermissionChecker,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeState(weatherCards = mutableListOf()))
     val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
@@ -45,6 +46,7 @@ class HomeViewModel @Inject constructor(
     val hasLocationPermission: StateFlow<Boolean> = _hasLocationPermission
 
     init {
+        if (permissionChecker.hasLocationPermission()) loadUserLocation()
         loadLocations()
     }
 
@@ -52,7 +54,7 @@ class HomeViewModel @Inject constructor(
         when (event) {
             HomeEvent.AllowLocationPermissionEvent -> {
                 _hasLocationPermission.value = true
-                handleEvent(HomeEvent.LoadLocationsEvent)
+                loadUserLocation()
             }
 
             HomeEvent.LoadLocationsEvent -> loadLocations()
@@ -65,20 +67,53 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun loadLocations() {
+    private fun loadUserLocation() {
         viewModelScope.launch {
-            val params = GetLocationsParams(permissionChecker.hasLocationPermission())
-            when (val result = getLocationsUseCase(params)) {
+            val localWeather = UserLocation.createLocalWeatherLocation()
+            val cardDataState = WeatherCardData(
+                localWeather, null, isLoading = true
+            )
+            val updatedList = listOf(cardDataState) + _uiState.value.weatherCards
+            _uiState.value = _uiState.value.copy(weatherCards = updatedList)
+            when (val result = getUserLocationUseCase()) {
                 is LocationResponse.Success -> {
-                    val locations = result.location
+                    val location = result.location
                     _uiState.update { currentState ->
-                        val items = locations.map { location ->
-                            CardDataState(
-                                location, null, isLoading = true
-                            )
+                        val items = currentState.weatherCards.map { cardData ->
+                            if (cardData.userLocation.id == location.id) {
+                                cardData.copy(
+                                    userLocation = location,
+                                    weather = null,
+                                    isLoading = true
+                                )
+                            } else {
+                                cardData
+                            }
                         }
                         currentState.copy(weatherCards = items)
                     }
+                    handleEvent(HomeEvent.GetWeatherEvent(location))
+                }
+
+                is LocationResponse.Error -> {
+                    _snackBarChannel.send(result.exception.message.toString())
+                }
+            }
+        }
+    }
+
+    private fun loadLocations() {
+        viewModelScope.launch {
+            when (val result = getLocationsUseCase()) {
+                is LocationResponse.Success -> {
+                    val locations = result.location
+                    val items = locations.map { location ->
+                        WeatherCardData(
+                            location, null, isLoading = true
+                        )
+                    }
+                    val updatedList = _uiState.value.weatherCards + items
+                    _uiState.value = _uiState.value.copy(weatherCards = updatedList)
                     locations.map { location ->
                         handleEvent(HomeEvent.GetWeatherEvent(location))
                     }
@@ -140,7 +175,7 @@ class HomeViewModel @Inject constructor(
             val params = AddLocationParams(locationName, latitude, longitude)
             when (val result = addLocationUseCase(params)) {
                 is LocationResponse.Success -> {
-                    val cardDataState = CardDataState(
+                    val cardDataState = WeatherCardData(
                         result.location,
                         null,
                         isLoading = true
@@ -157,7 +192,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun removeLocation(cardDataState: CardDataState) {
+    private fun removeLocation(cardDataState: WeatherCardData) {
         viewModelScope.launch {
             val params = RemoveLocationParams(cardDataState.userLocation)
             when (val result = removeLocationUseCase(params)) {

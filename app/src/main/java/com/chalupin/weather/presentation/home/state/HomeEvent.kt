@@ -1,6 +1,7 @@
 package com.chalupin.weather.presentation.home.state
 
 import com.chalupin.weather.domain.entity.UserLocation
+import com.chalupin.weather.presentation.home.util.WeatherCardData
 
 sealed class HomeEvent {
     data object AllowLocationPermissionEvent : HomeEvent()
@@ -15,5 +16,5 @@ sealed class HomeEvent {
         val longitude: Double
     ) : HomeEvent()
 
-    data class RemoveLocationEvent(val cardDataState: CardDataState) : HomeEvent()
+    data class RemoveLocationEvent(val cardDataState: WeatherCardData) : HomeEvent()
 }

@@ -1,9 +1,10 @@
 package com.chalupin.weather.domain.entity
 
+import com.chalupin.weather.presentation.home.util.WeatherIconType
+
 data class DailyColumn(
-    val date: String,
-    val minTemp: String,
+    val dayOfWeek: String,
     val maxTemp: String,
-    val animatedIcon: Int,
-    val icon: Int
+    val minTemp: String,
+    val weatherTypeIcon: WeatherIconType
 )
