@@ -2,7 +2,7 @@ package com.chalupin.weather.domain.entity
 
 import com.chalupin.weather.domain.enum.WeatherCodes
 import com.chalupin.weather.presentation.home.util.DailyColumnData
-import com.chalupin.weather.presentation.home.util.WeatherIconType
+import com.chalupin.weather.presentation.home.util.WeatherImageType
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
@@ -16,8 +16,8 @@ data class WeatherEntity(val currentEntity: CurrentEntity, val currentUnitsEntit
         return WeatherCodes.getDescriptionForCode(currentEntity.weatherCode)
     }
 
-    fun getCurrentWeatherTypeIcon(): WeatherIconType {
-        return WeatherIconType.WeatherIconAnimated(WeatherCodes.getLottieIconFile(currentEntity.weatherCode))
+    fun getCurrentWeatherTypeIcon(): WeatherImageType {
+        return WeatherImageType.WeatherImageAnimated(WeatherCodes.getLottieIconFile(currentEntity.weatherCode))
     }
 
     fun getDailyData(): List<DailyColumnData> {
@@ -31,7 +31,7 @@ data class WeatherEntity(val currentEntity: CurrentEntity, val currentUnitsEntit
                     date.format(dayOfWeekFormat),
                     "${dailyEntity.temperatureMax[i].roundToInt()}${currentUnitsEntity.temperatureUnit}",
                     "${dailyEntity.temperatureMin[i].roundToInt()}${currentUnitsEntity.temperatureUnit}",
-                    WeatherIconType.WeatherIconStatic(WeatherCodes.getSvgFile(dailyEntity.weatherCode[i]))
+                    WeatherImageType.WeatherImageStatic(WeatherCodes.getSvgFile(dailyEntity.weatherCode[i]))
                 )
             )
         }

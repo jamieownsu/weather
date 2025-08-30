@@ -23,7 +23,10 @@ import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 
 @Composable
-fun AddLocationButton(onLocationAdded: (place: Place) -> Unit) {
+fun AddLocationButton(
+    fabClicked: () -> Unit,
+    onLocationAdded: (place: Place) -> Unit
+) {
     val context = LocalContext.current
     val launcher =
         rememberLauncherForActivityResult(
@@ -41,14 +44,9 @@ fun AddLocationButton(onLocationAdded: (place: Place) -> Unit) {
                 }
             }
         }
-
-//    Box(
-//        modifier = Modifier.fillMaxSize(),
-//        contentAlignment = Alignment.BottomCenter
-//    ) {
     FloatingActionButton(
-//            modifier = Modifier.padding(16.dp),
         onClick = {
+            fabClicked()
             val fields =
                 listOf(
                     Place.Field.ADDRESS,
@@ -69,6 +67,5 @@ fun AddLocationButton(onLocationAdded: (place: Place) -> Unit) {
             Spacer(modifier = Modifier.width(8.dp))
             Text("Add Location")
         }
-//        }
     }
 }

@@ -11,14 +11,14 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.chalupin.weather.presentation.home.util.WeatherIconType
+import com.chalupin.weather.presentation.home.util.WeatherImageType
 
 @Composable
-fun WeatherTypeImage(weatherIconType: WeatherIconType) {
-    when (weatherIconType) {
-        is WeatherIconType.WeatherIconAnimated -> {
+fun WeatherTypeImage(weatherImageType: WeatherImageType) {
+    when (weatherImageType) {
+        is WeatherImageType.WeatherImageAnimated -> {
             val composition by rememberLottieComposition(
-                LottieCompositionSpec.RawRes(weatherIconType.res)
+                LottieCompositionSpec.RawRes(weatherImageType.res)
             )
 
             LottieAnimation(
@@ -29,9 +29,9 @@ fun WeatherTypeImage(weatherIconType: WeatherIconType) {
             )
         }
 
-        is WeatherIconType.WeatherIconStatic -> {
+        is WeatherImageType.WeatherImageStatic -> {
             Image(
-                painter = painterResource(id = weatherIconType.res),
+                painter = painterResource(id = weatherImageType.res),
                 contentDescription = "A weather icon",
                 modifier = Modifier.size(32.dp)
             )

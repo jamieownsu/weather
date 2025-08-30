@@ -27,7 +27,6 @@ fun LastUpdatedText() {
             val seconds = diff / 1000
             val minutes = seconds / 60
             elapsedMinutes = minutes.toInt()
-            Log.d("elapsed", elapsedMinutes.toString())
             delay(1000L)
         }
     }

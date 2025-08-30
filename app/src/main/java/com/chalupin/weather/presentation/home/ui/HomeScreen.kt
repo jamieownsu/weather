@@ -85,19 +85,20 @@ fun HomeScreen(
             SnackbarHost(hostState = snackBarHostState)
         },
         floatingActionButton = {
-            AddLocationButton(onLocationAdded = { place ->
-                hasLaunched = false
-                val placeName = place.formattedAddress ?: "Unknown"
-                place.location?.let {
-                    val latitude = it.latitude
-                    val longitude = it.longitude
-                    viewModel.handleEvent(
-                        HomeEvent.AddLocationEvent(
-                            placeName, latitude, longitude
+            AddLocationButton(
+                fabClicked = { hasLaunched = false },
+                onLocationAdded = { place ->
+                    val placeName = place.formattedAddress ?: "Unknown"
+                    place.location?.let {
+                        val latitude = it.latitude
+                        val longitude = it.longitude
+                        viewModel.handleEvent(
+                            HomeEvent.AddLocationEvent(
+                                placeName, latitude, longitude
+                            )
                         )
-                    )
-                }
-            })
+                    }
+                })
         }
     ) { innerPadding ->
         Column(

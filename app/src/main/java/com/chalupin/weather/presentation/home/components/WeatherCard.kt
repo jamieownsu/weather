@@ -102,7 +102,7 @@ fun WeatherCard(
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                                 WeatherTypeImage(
-                                    item.weatherTypeIcon,
+                                    item.weatherImageType,
                                 )
                                 Text(
                                     text = item.minTemp,
@@ -111,7 +111,6 @@ fun WeatherCard(
                             }
                         }
                     }
-
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
