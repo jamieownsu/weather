@@ -5,5 +5,9 @@
     <string name="dialog_delete_confirm">Delete</string>
     <string name="dialog_delete_cancel">Cancel</string>
     <string name="data_unavailable">Data unavailable</string>
-    <string name="last_updated">updated %s</string>
+    <string name="updated_just_now">updated just now</string>
+    <plurals name="last_updated">
+        <item quantity="one">updated %d minute ago</item>
+        <item quantity="other">updated %d minutes ago</item>
+    </plurals>
 </resources>
