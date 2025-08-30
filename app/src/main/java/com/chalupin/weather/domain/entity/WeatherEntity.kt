@@ -1,7 +1,7 @@
 package com.chalupin.weather.domain.entity
 
 import com.chalupin.weather.domain.enum.WeatherCodes
-import com.chalupin.weather.presentation.home.util.DailyColumn
+import com.chalupin.weather.presentation.home.util.DailyColumnData
 import com.chalupin.weather.presentation.home.util.WeatherIconType
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -20,14 +20,14 @@ data class WeatherEntity(val currentEntity: CurrentEntity, val currentUnitsEntit
         return WeatherIconType.WeatherIconAnimated(WeatherCodes.getLottieIconFile(currentEntity.weatherCode))
     }
 
-    fun getDailyData(): List<DailyColumn> {
+    fun getDailyData(): List<DailyColumnData> {
         val dayOfWeekFormat = DateTimeFormatter.ofPattern("EEE")
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val retList = mutableListOf<DailyColumn>()
+        val retList = mutableListOf<DailyColumnData>()
         for ((i, item) in dailyEntity.date.withIndex()) {
             val date = LocalDate.parse(item, formatter)
             retList.add(
-                DailyColumn(
+                DailyColumnData(
                     date.format(dayOfWeekFormat),
                     "${dailyEntity.temperatureMax[i].roundToInt()}${currentUnitsEntity.temperatureUnit}",
                     "${dailyEntity.temperatureMin[i].roundToInt()}${currentUnitsEntity.temperatureUnit}",
