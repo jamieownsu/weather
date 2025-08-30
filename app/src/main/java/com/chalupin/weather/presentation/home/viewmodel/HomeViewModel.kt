@@ -2,7 +2,7 @@ package com.chalupin.weather.presentation.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.chalupin.weather.domain.entity.UserLocation
+import com.chalupin.weather.domain.entity.LocationEntity
 import com.chalupin.weather.domain.usecase.AddLocationUseCase
 import com.chalupin.weather.domain.usecase.GetLocationsUseCase
 import com.chalupin.weather.domain.usecase.GetUserLocationUseCase
@@ -36,7 +36,7 @@ class HomeViewModel @Inject constructor(
     private val getLocationsUseCase: GetLocationsUseCase,
     private val addLocationUseCase: AddLocationUseCase,
     private val removeLocationUseCase: RemoveLocationUseCase,
-    permissionChecker: PermissionChecker,
+    private val permissionChecker: PermissionChecker,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeState(weatherCards = mutableListOf()))
     val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
@@ -48,7 +48,7 @@ class HomeViewModel @Inject constructor(
     val hasLocationPermission: StateFlow<Boolean> = _hasLocationPermission
 
     init {
-        if (permissionChecker.hasLocationPermission()) loadUserLocation()
+        loadUserLocation()
         loadLocations()
     }
 
@@ -59,8 +59,9 @@ class HomeViewModel @Inject constructor(
                 loadUserLocation()
             }
 
+            HomeEvent.LoadUserLocationEvent -> loadUserLocation()
             HomeEvent.LoadLocationsEvent -> loadLocations()
-            is HomeEvent.GetWeatherEvent -> getWeatherData(event.userLocation)
+            is HomeEvent.GetWeatherEvent -> getWeatherData(event.locationEntity)
             is HomeEvent.AddLocationEvent -> addLocation(
                 event.locationName, event.latitude, event.longitude
             )
@@ -75,43 +76,54 @@ class HomeViewModel @Inject constructor(
         cancellationTokenSource?.cancel()
         cancellationTokenSource = null
     }
+
     private fun loadUserLocation() {
-        viewModelScope.launch {
-            try {
-                val localWeather = UserLocation.createLocalWeatherLocation()
-                val cardDataState = WeatherCardData(
-                    localWeather, null, isLoading = true
-                )
-                val updatedList = listOf(cardDataState) + _uiState.value.weatherCards
-                _uiState.value = _uiState.value.copy(weatherCards = updatedList)
-                cancellationTokenSource = CancellationTokenSource()
-                val params = GetUserLocationParams(cancellationTokenSource!!.token)
-                when (val result = getUserLocationUseCase(params)) {
-                    is LocationResponse.Success -> {
-                        val location = result.location
-                        _uiState.update { currentState ->
-                            val items = currentState.weatherCards.map { cardData ->
-                                if (cardData.userLocation.id == location.id) {
-                                    cardData.copy(
-                                        userLocation = location,
-                                        weather = null,
+        if (permissionChecker.hasLocationPermission()) {
+            viewModelScope.launch {
+                try {
+                    _uiState.update { currentState ->
+                        val items = currentState.weatherCards.toMutableList()
+                        val index = items.indexOfFirst { it.locationEntity.id == -1L }
+                        if (index != -1) {
+                            items[index] = items[index].copy(
+                                isLoading = true
+                            )
+                            currentState.copy(weatherCards = items)
+                        } else {
+                            val localWeather = LocationEntity.createLocalWeatherLocation()
+                            val cardDataState = WeatherCardData(
+                                localWeather, null, isLoading = true
+                            )
+                            val updatedList = listOf(cardDataState) + _uiState.value.weatherCards
+                            currentState.copy(weatherCards = updatedList)
+                        }
+                    }
+                    cancellationTokenSource = CancellationTokenSource()
+                    val params = GetUserLocationParams(cancellationTokenSource!!.token)
+                    when (val result = getUserLocationUseCase(params)) {
+                        is LocationResponse.Success -> {
+                            val location = result.location
+                            _uiState.update { currentState ->
+                                val items = currentState.weatherCards.toMutableList()
+                                val index = items.indexOfFirst { it.locationEntity.id == location.id }
+                                if (index != -1) {
+                                    items[index] = items[index].copy(
+                                        locationEntity = location,
                                         isLoading = true
                                     )
-                                } else {
-                                    cardData
                                 }
+                                currentState.copy(weatherCards = items)
                             }
-                            currentState.copy(weatherCards = items)
+                            handleEvent(HomeEvent.GetWeatherEvent(location))
                         }
-                        handleEvent(HomeEvent.GetWeatherEvent(location))
-                    }
 
-                    is LocationResponse.Error -> {
-                        _snackBarChannel.send(result.exception.message.toString())
+                        is LocationResponse.Error -> {
+                            _snackBarChannel.send(result.exception.message.toString())
+                        }
                     }
+                } finally {
+                    cancellationTokenSource = null
                 }
-            } finally {
-                cancellationTokenSource = null
             }
         }
     }
@@ -140,43 +152,38 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun getWeatherData(userLocation: UserLocation) {
+    private fun getWeatherData(locationEntity: LocationEntity) {
         viewModelScope.launch {
-            val latitude = userLocation.latitude
-            val longitude = userLocation.longitude
             _uiState.update { currentState ->
-                val items = currentState.weatherCards.map { cardData ->
-                    if (cardData.userLocation.id == userLocation.id) {
-                        cardData.copy(isLoading = true)
-                    } else {
-                        cardData
-                    }
+                val items = currentState.weatherCards.toMutableList()
+                val index = items.indexOfFirst { it.locationEntity.id == locationEntity.id }
+                if (index != -1) {
+                    items[index] = items[index].copy(
+                        isLoading = true
+                    )
                 }
                 currentState.copy(weatherCards = items)
             }
+            val latitude = locationEntity.latitude
+            val longitude = locationEntity.longitude
             val params = GetWeatherDataParams(latitude, longitude)
             val result = getWeatherDataUseCase(params)
             _uiState.update { currentState ->
-                val items = currentState.weatherCards.map { cardData ->
-                    if (cardData.userLocation.id == userLocation.id) {
-                        if (result is WeatherResponse.Success) {
-                            cardData.copy(
-                                userLocation = userLocation,
-                                weather = result.weather,
-                                isLoading = false
-                            )
-                        } else {
-                            val error = result as WeatherResponse.Error
-                            _snackBarChannel.send(result.exception.message.toString())
-                            cardData.copy(
-                                userLocation = userLocation,
-                                weather = null,
-                                isLoading = false,
-                                error = error.exception.message
-                            )
-                        }
+                val items = currentState.weatherCards.toMutableList()
+                val index = items.indexOfFirst { it.locationEntity.id == locationEntity.id }
+                if (index != -1) {
+                    if (result is WeatherResponse.Success) {
+                        items[index] = items[index].copy(
+                            weatherEntity = result.weather,
+                            isLoading = false
+                        )
                     } else {
-                        cardData
+                        val error = result as WeatherResponse.Error
+                        _snackBarChannel.send(result.exception.message.toString())
+                        items[index] = items[index].copy(
+                            isLoading = false,
+                            error = error.exception.message
+                        )
                     }
                 }
                 currentState.copy(weatherCards = items)
@@ -191,7 +198,6 @@ class HomeViewModel @Inject constructor(
                 is LocationResponse.Success -> {
                     val cardDataState = WeatherCardData(
                         result.location,
-                        null,
                         isLoading = true
                     )
                     val updatedList = _uiState.value.weatherCards + cardDataState
@@ -208,7 +214,7 @@ class HomeViewModel @Inject constructor(
 
     private fun removeLocation(cardDataState: WeatherCardData) {
         viewModelScope.launch {
-            val params = RemoveLocationParams(cardDataState.userLocation)
+            val params = RemoveLocationParams(cardDataState.locationEntity)
             when (val result = removeLocationUseCase(params)) {
                 is LocationResponse.Success -> {
                     val updatedList = _uiState.value.weatherCards.toMutableList().apply {

@@ -15,7 +15,7 @@ class RemoveLocationUseCase @Inject constructor(
     suspend operator fun invoke(params: RemoveLocationParams): LocationResponse<Unit> {
         return withContext(ioDispatcher) {
             try {
-                LocationResponse.Success(locationRepository.deleteLocation(params.userLocation))
+                LocationResponse.Success(locationRepository.deleteLocation(params.locationEntity))
             } catch (e: Exception) {
                 LocationResponse.Error(e)
             }

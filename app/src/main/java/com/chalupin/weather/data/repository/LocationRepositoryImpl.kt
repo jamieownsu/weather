@@ -4,7 +4,7 @@ import android.util.Log
 import com.chalupin.weather.data.dao.LocationDao
 import com.chalupin.weather.data.mapper.toDomain
 import com.chalupin.weather.data.mapper.toEntity
-import com.chalupin.weather.domain.entity.UserLocation
+import com.chalupin.weather.domain.entity.LocationEntity
 import com.chalupin.weather.domain.repository.LocationRepository
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Priority
@@ -17,14 +17,14 @@ class LocationRepositoryImpl @Inject constructor(
     private val fusedLocationClient: FusedLocationProviderClient
 ) : LocationRepository {
 
-    override suspend fun getCurrentLocation(cancellationToken: CancellationToken): UserLocation {
+    override suspend fun getCurrentLocation(cancellationToken: CancellationToken): LocationEntity {
         return try {
 //            val location = fusedLocationClient.lastLocation.await()
             val location = fusedLocationClient.getCurrentLocation(
                 Priority.PRIORITY_HIGH_ACCURACY,
                 cancellationToken
             ).await()
-            UserLocation(
+            LocationEntity(
                 -1,
                 "Local weather",
                 location?.latitude ?: 40.712776,
@@ -39,7 +39,7 @@ class LocationRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getLocations(): List<UserLocation> {
+    override suspend fun getLocations(): List<LocationEntity> {
         try {
             val locations = locationDao.getAllLocations()
             val locationsData = locations.map { it.toDomain() }
@@ -50,10 +50,10 @@ class LocationRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun insertLocation(userLocation: UserLocation): UserLocation {
+    override suspend fun insertLocation(locationEntity: LocationEntity): LocationEntity {
         try {
-            val id = locationDao.insertLocation(userLocation.toEntity())
-            val updateLocation = userLocation.copy(id = id)
+            val id = locationDao.insertLocation(locationEntity.toEntity())
+            val updateLocation = locationEntity.copy(id = id)
             return updateLocation
         } catch (e: Exception) {
             Log.e("insertLocation", e.message.toString())
@@ -61,9 +61,9 @@ class LocationRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteLocation(userLocation: UserLocation) {
+    override suspend fun deleteLocation(locationEntity: LocationEntity) {
         try {
-            val locToDel = userLocation.toEntity()
+            val locToDel = locationEntity.toEntity()
             locationDao.deleteLocation(locToDel)
         } catch (e: Exception) {
             Log.e("deleteLocation", e.message.toString())

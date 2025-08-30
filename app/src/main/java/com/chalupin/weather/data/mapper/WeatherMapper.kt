@@ -4,36 +4,36 @@ import com.chalupin.weather.data.dto.CurrentDto
 import com.chalupin.weather.data.dto.CurrentUnitsDto
 import com.chalupin.weather.data.dto.DailyDto
 import com.chalupin.weather.data.dto.WeatherDto
-import com.chalupin.weather.domain.entity.Current
-import com.chalupin.weather.domain.entity.CurrentUnits
-import com.chalupin.weather.domain.entity.Daily
-import com.chalupin.weather.domain.entity.Weather
+import com.chalupin.weather.domain.entity.CurrentEntity
+import com.chalupin.weather.domain.entity.CurrentUnitsEntity
+import com.chalupin.weather.domain.entity.DailyEntity
+import com.chalupin.weather.domain.entity.WeatherEntity
 
 
-fun WeatherDto.toDomain(): Weather {
-    return Weather(
-        current = this.currentDto.toDomain(),
-        currentUnits = this.currentUnitsDto.toDomain(),
-        daily = this.dailyDto.toDomain()
+fun WeatherDto.toDomain(): WeatherEntity {
+    return WeatherEntity(
+        currentEntity = this.currentDto.toDomain(),
+        currentUnitsEntity = this.currentUnitsDto.toDomain(),
+        dailyEntity = this.dailyDto.toDomain()
     )
 }
 
-fun CurrentDto.toDomain(): Current {
-    return Current(
+fun CurrentDto.toDomain(): CurrentEntity {
+    return CurrentEntity(
         date = this.date,
         temperature = this.temperature,
         weatherCode = this.weatherCode
     )
 }
 
-fun CurrentUnitsDto.toDomain(): CurrentUnits {
-    return CurrentUnits(
+fun CurrentUnitsDto.toDomain(): CurrentUnitsEntity {
+    return CurrentUnitsEntity(
         temperatureUnit = this.temperatureUnit,
     )
 }
 
-fun DailyDto.toDomain(): Daily {
-    return Daily(
+fun DailyDto.toDomain(): DailyEntity {
+    return DailyEntity(
         date = this.date,
         temperatureMin = this.temperatureMin,
         temperatureMax = this.temperatureMax,

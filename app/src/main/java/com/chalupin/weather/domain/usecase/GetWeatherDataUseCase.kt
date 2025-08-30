@@ -1,6 +1,6 @@
 package com.chalupin.weather.domain.usecase
 
-import com.chalupin.weather.domain.entity.Weather
+import com.chalupin.weather.domain.entity.WeatherEntity
 import com.chalupin.weather.domain.repository.WeatherRepository
 import com.chalupin.weather.domain.usecase.params.GetWeatherDataParams
 import com.chalupin.weather.domain.util.WeatherResponse
@@ -13,7 +13,7 @@ class GetWeatherDataUseCase @Inject constructor(
     private val weatherRepository: WeatherRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
-    suspend operator fun invoke(params: GetWeatherDataParams): WeatherResponse<Weather> {
+    suspend operator fun invoke(params: GetWeatherDataParams): WeatherResponse<WeatherEntity> {
         return withContext(ioDispatcher) {
             try {
                 WeatherResponse.Success(

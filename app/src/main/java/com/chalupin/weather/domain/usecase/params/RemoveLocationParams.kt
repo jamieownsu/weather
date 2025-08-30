@@ -1,5 +1,5 @@
 package com.chalupin.weather.domain.usecase.params
 
-import com.chalupin.weather.domain.entity.UserLocation
+import com.chalupin.weather.domain.entity.LocationEntity
 
-data class RemoveLocationParams(val userLocation: UserLocation)
+data class RemoveLocationParams(val locationEntity: LocationEntity)

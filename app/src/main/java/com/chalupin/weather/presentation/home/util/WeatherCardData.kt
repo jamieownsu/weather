@@ -1,11 +1,11 @@
 package com.chalupin.weather.presentation.home.util
 
-import com.chalupin.weather.domain.entity.UserLocation
-import com.chalupin.weather.domain.entity.Weather
+import com.chalupin.weather.domain.entity.LocationEntity
+import com.chalupin.weather.domain.entity.WeatherEntity
 
 data class WeatherCardData(
-    val userLocation: UserLocation,
-    val weather: Weather?,
+    val locationEntity: LocationEntity,
+    val weatherEntity: WeatherEntity? = null,
     val isLoading: Boolean = false,
     val error: String? = null
 )

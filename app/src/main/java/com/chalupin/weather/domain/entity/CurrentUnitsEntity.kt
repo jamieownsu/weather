@@ -1,5 +1,5 @@
 package com.chalupin.weather.domain.entity
 
-data class CurrentUnits(
+data class CurrentUnitsEntity(
     val temperatureUnit: String,
 )

@@ -1,14 +1,14 @@
 package com.chalupin.weather.domain.repository
 
-import com.chalupin.weather.domain.entity.UserLocation
+import com.chalupin.weather.domain.entity.LocationEntity
 import com.google.android.gms.tasks.CancellationToken
 
 interface LocationRepository {
-    suspend fun getCurrentLocation(cancellationToken: CancellationToken): UserLocation
+    suspend fun getCurrentLocation(cancellationToken: CancellationToken): LocationEntity
 
-    suspend fun getLocations(): List<UserLocation>
+    suspend fun getLocations(): List<LocationEntity>
 
-    suspend fun deleteLocation(userLocation: UserLocation)
+    suspend fun deleteLocation(locationEntity: LocationEntity)
 
-    suspend fun insertLocation(userLocation: UserLocation): UserLocation
+    suspend fun insertLocation(locationEntity: LocationEntity): LocationEntity
 }

@@ -3,7 +3,7 @@ package com.chalupin.weather.data.repository
 import android.util.Log
 import com.chalupin.weather.data.api.WeatherService
 import com.chalupin.weather.data.mapper.toDomain
-import com.chalupin.weather.domain.entity.Weather
+import com.chalupin.weather.domain.entity.WeatherEntity
 import com.chalupin.weather.domain.repository.WeatherRepository
 import javax.inject.Inject
 
@@ -13,7 +13,7 @@ class WeatherRepositoryImpl @Inject constructor(
     override suspend fun getWeatherData(
         latitude: Double,
         longitude: Double,
-    ): Weather {
+    ): WeatherEntity {
         try {
             val response = weatherService.getWeather(
                 latitude = latitude,

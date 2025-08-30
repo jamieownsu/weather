@@ -25,7 +25,7 @@ fun WeatherTypeImage(weatherIconType: WeatherIconType) {
                 composition = composition,
                 iterations = LottieConstants.IterateForever,
                 speed = 2f,
-                modifier = Modifier.size(56.dp)
+                modifier = Modifier.size(48.dp)
             )
         }
 

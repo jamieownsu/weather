@@ -26,8 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import com.chalupin.weather.R
 import com.chalupin.weather.presentation.home.components.AddLocationButton
 import com.chalupin.weather.presentation.home.components.LocationPermissionCard
@@ -45,17 +46,25 @@ fun HomeScreen(
     snackBarHostState: SnackbarHostState,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     val locationPermissionState by viewModel.hasLocationPermission.collectAsStateWithLifecycle()
-
     val snackBarMessageState = viewModel.snackBarFlow.collectAsState(initial = null)
-
     var modalState by remember { mutableStateOf<ModalState>(ModalState.Hidden) }
+    var hasLaunched by remember { mutableStateOf(false) }
 
     LaunchedEffect(snackBarMessageState.value) {
         val message = snackBarMessageState.value
         if (message != null) {
             snackBarHostState.showSnackbar(message)
+        }
+    }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        if (hasLaunched) {
+            viewModel.handleEvent(
+                HomeEvent.LoadUserLocationEvent
+            )
+        } else {
+            hasLaunched = true
         }
     }
 
@@ -77,6 +86,7 @@ fun HomeScreen(
         },
         floatingActionButton = {
             AddLocationButton(onLocationAdded = { place ->
+                hasLaunched = false
                 val placeName = place.formattedAddress ?: "Unknown"
                 place.location?.let {
                     val latitude = it.latitude
@@ -117,18 +127,24 @@ fun HomeScreen(
                             .padding(bottom = 16.dp)
                     ) {
                         WeatherCardHeader(
-                            data.userLocation.locationName,
-                            showDelete = data.userLocation.id != -1L,
+                            data.locationEntity.locationName,
+                            showDelete = data.locationEntity.id != -1L,
                             onRemoveClick = {
                                 modalState = ModalState.ShowDeleteConfirmation(data)
                             })
                         WeatherCard(
-                            data.weather,
+                            data.weatherEntity,
                             data.isLoading,
                             onRefreshClick = {
-                                viewModel.handleEvent(
-                                    HomeEvent.GetWeatherEvent(data.userLocation)
-                                )
+                                if (data.locationEntity.id == -1L) {
+                                    viewModel.handleEvent(
+                                        HomeEvent.LoadUserLocationEvent
+                                    )
+                                } else {
+                                    viewModel.handleEvent(
+                                        HomeEvent.GetWeatherEvent(data.locationEntity)
+                                    )
+                                }
                             })
                     }
                 }

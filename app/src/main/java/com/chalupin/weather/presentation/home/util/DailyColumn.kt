@@ -1,6 +1,4 @@
-package com.chalupin.weather.domain.entity
-
-import com.chalupin.weather.presentation.home.util.WeatherIconType
+package com.chalupin.weather.presentation.home.util
 
 data class DailyColumn(
     val dayOfWeek: String,

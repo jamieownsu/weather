@@ -1,10 +1,10 @@
 package com.chalupin.weather.data.mapper
 
 import com.chalupin.weather.data.dto.LocationDto
-import com.chalupin.weather.domain.entity.UserLocation
+import com.chalupin.weather.domain.entity.LocationEntity
 
-fun LocationDto.toDomain(): UserLocation {
-    return UserLocation(
+fun LocationDto.toDomain(): LocationEntity {
+    return LocationEntity(
         id = this.id,
         locationName = this.locationName,
         latitude = this.latitude,
@@ -12,7 +12,7 @@ fun LocationDto.toDomain(): UserLocation {
     )
 }
 
-fun UserLocation.toEntity(): LocationDto {
+fun LocationEntity.toEntity(): LocationDto {
     return LocationDto(
         id = this.id,
         locationName = this.locationName,

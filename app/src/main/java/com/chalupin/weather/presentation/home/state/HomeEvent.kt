@@ -1,6 +1,6 @@
 package com.chalupin.weather.presentation.home.state
 
-import com.chalupin.weather.domain.entity.UserLocation
+import com.chalupin.weather.domain.entity.LocationEntity
 import com.chalupin.weather.presentation.home.util.WeatherCardData
 
 sealed class HomeEvent {
@@ -8,7 +8,9 @@ sealed class HomeEvent {
 
     data object LoadLocationsEvent : HomeEvent()
 
-    data class GetWeatherEvent(val userLocation: UserLocation) : HomeEvent()
+    data object LoadUserLocationEvent : HomeEvent()
+
+    data class GetWeatherEvent(val locationEntity: LocationEntity) : HomeEvent()
 
     data class AddLocationEvent(
         val locationName: String,

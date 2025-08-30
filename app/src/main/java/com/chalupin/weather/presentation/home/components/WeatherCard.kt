@@ -24,18 +24,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.chalupin.weather.domain.entity.Weather
+import com.chalupin.weather.R
+import com.chalupin.weather.domain.entity.WeatherEntity
 
 @Composable
 fun WeatherCard(
-    weather: Weather?,
+    weatherEntity: WeatherEntity?,
     isLoading: Boolean,
     onRefreshClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier
-            .height(200.dp),
+            .height(210.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         if (isLoading) {
@@ -46,9 +48,11 @@ fun WeatherCard(
                 CircularProgressIndicator()
             }
         } else {
-            weather?.let {
+            weatherEntity?.let {
                 Column(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .padding(top = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Row(
@@ -69,7 +73,12 @@ fun WeatherCard(
                             style = MaterialTheme.typography.titleSmall
                         )
                         Spacer(Modifier.weight(1f))
-                        IconButton(onClick = onRefreshClick) {
+                        IconButton(
+                            onClick = onRefreshClick,
+//                            colors = IconButtonDefaults.iconButtonColors(
+//                                containerColor = MaterialTheme.colorScheme.onSecondary
+//                            )
+                        ) {
                             Icon(
                                 imageVector = Icons.Outlined.Refresh,
                                 contentDescription = "Refresh"
@@ -102,13 +111,21 @@ fun WeatherCard(
                             }
                         }
                     }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                    LastUpdatedText()
+                    }
+                    Spacer(Modifier.height(2.dp))
                 }
             } ?: run {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Data unavailable")
+                    Text(stringResource(id = R.string.data_unavailable))
                 }
             }
         }
