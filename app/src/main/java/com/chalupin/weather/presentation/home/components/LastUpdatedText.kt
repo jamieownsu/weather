@@ -11,6 +11,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import com.chalupin.weather.R
 import kotlinx.coroutines.delay
 
 @Composable
@@ -31,7 +33,7 @@ fun LastUpdatedText() {
 
     Crossfade(targetState = elapsedTimeString, label = "elapsed time crossfade") { text ->
         Text(
-            text,
+            stringResource(id = R.string.last_updated, text),
             style = MaterialTheme.typography.labelSmall,
             color = Color.Gray,
         )
